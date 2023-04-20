@@ -1,3 +1,8 @@
+<?php
+
+    session_start();
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -58,9 +63,45 @@
                                 </ul>
                             </div>
                         </li>
-                        <li class="header_items signUp_logIn"><a class="seperate" href="">Đăng Ký</a></li>
-                        <li class="header_items signUp_logIn"><a href="">Đăng Nhập</a></li>
-                        <li class="header_items user_account-pc loginSuccess">
+                        <?php
+                            if(isset($_SESSION["account_id"])) {
+                                echo '
+                                    <li class="header_items user_account-pc">
+                                        <i class="fas fa-user-alt"></i>
+                                        <span>'.$_SESSION["account_username"].'</span>
+                                        <i class="fa-solid fa-chevron-down"></i>
+                                        <div class="account_pc-selection">
+                                            <ul class="account_pc-list">
+                                                <li class="account_pc-option myOrder_ist">
+                                                    <i class = "fas fa-file-alt"></i>
+                                                    <span> Đơn hàng của tôi</span>
+                                                </li>';
+                                                if(strcmp($_SESSION['account_ten-nhom-quyen'], "user")!=0) {
+                                                    echo '
+                                                        <li class="account_pc-option administrator_page">
+                                                            <i class="fa-solid fa-gear"></i>
+                                                            <span> Trang quản trị</span>
+                                                        </li>
+                                                    ';
+                                                }
+                                                echo
+                                                '
+                                                    <li id="logout_btn" class="account_pc-option">
+                                                        <i class="fas fa-sign-out"></i>
+                                                        <span> Đăng xuất</span>
+                                                    </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                ';
+                            } else {
+                                echo '
+                                    <li class="header_items signUp_logIn"><a class="seperate" href="./login.php">Đăng Ký</a></li>
+                                    <li class="header_items signUp_logIn"><a href="./login.php">Đăng Nhập</a></li>
+                                ';
+                            }
+                        ?>
+                        <!-- <li class="header_items user_account-pc loginSuccess">
                             <i class="fas fa-user-alt"></i>
                             <span></span>
                             <i class="fa-solid fa-chevron-down"></i>
@@ -80,7 +121,7 @@
                                     </li>
                                 </ul>
                             </div>
-                        </li>
+                        </li> -->
                     </ul>
                 </div>
                 <!-- header search section -->
@@ -312,71 +353,6 @@
         </div>
 
         <!-- sign up/ login modal -->
-        <div class="signUp_modal signUp_modal-hide">
-            <div class="form-contain">
-                <div class="form_close-btn">
-                    <i class="fa-solid fa-xmark"></i>
-                </div>
-
-                <div class="form-header">
-                    <div class="form-title">
-                        <h3 id="sign-up" class="active">Đăng Ký</h3>
-                        <h3 id="log-in">Đăng Nhập</h3>
-                    </div>
-                    <div class="line"></div>
-                    <p class="desc"></p>
-                </div>
-    
-                <form action="" method="post" class="form" id="form-1">
-                
-                    <div class="spacer"></div>
-        
-                    <div class="form-group">
-                        <label for="fullname" class="form-label">User name <span style="color: red;">*</span></label>
-                        <input type="text" name="fullname" id="fullname" class="form-input">
-                        <span class="form-messege"></span>
-                    </div>
-        
-                    <div class="form-group">
-                        <label for="email" class="form-label">Email <span style="color: red;">*</span></label>
-                        <input type="text" name="email" id="email" class="form-input">
-                        <span class="form-messege"></span>
-                    </div>
-        
-                    <div class="form-group">
-                        <label for="password" class="form-label">Mật khẩu <span style="color: red;">*</span></label>
-                        <input type="password" name="password" id="password" class="form-input">
-                        <span class="form-messege"></span>
-                    </div>
-        
-                    <div class="form-group">
-                        <label for="confirm-password" class="form-label">Xác nhận mật khẩu <span style="color: red;">*</span></label>
-                        <input type="password" name="confirm-password" id="confirm-password" class="form-input">
-                        <span class="form-messege"></span>
-                    </div>
-        
-                    <button id="signUp_btn" class="form-btn">Hoàn tất</button>
-                </form>
-                <form action="" method="post" class="form form_toggle-display" id="form-2">
-        
-                    <div class="spacer"></div>
-        
-                    <div class="form-group">
-                        <label for="fullname" class="form-label">User name</label>
-                        <input type="text" name="fullname" id="fullname-login" class="form-input">
-                        <span class="form-messege"></span>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="password" class="form-label">Mật khẩu</label>
-                        <input type="password" name="password" id="password-login" class="form-input">
-                        <span class="form-messege"></span>
-                    </div>
-    
-                    <button class="form-btn">Hoàn tất</button>
-                </form>
-            </div>
-        </div>
         
         <!-- review order notes modal -->
         <div class="orderNote_modal orderNote_modal-hide">

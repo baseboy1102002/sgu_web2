@@ -1,8 +1,12 @@
 <?php
 
-include_once 'D:\XAMPP\htdocs\ThaiTranWeb2\src\main\dao\dbDAO.php';
-include_once 'D:\XAMPP\htdocs\ThaiTranWeb2\src\main\model\productVariantsDTO.php';
-include_once 'D:\XAMPP\htdocs\ThaiTranWeb2\src\main\model\pageableDTO.php';
+// include_once 'D:\XAMPP\htdocs\ThaiTranWeb2\src\main\dao\dbDAO.php';
+// include_once 'D:\XAMPP\htdocs\ThaiTranWeb2\src\main\model\productVariantsDTO.php';
+// include_once 'D:\XAMPP\htdocs\ThaiTranWeb2\src\main\model\pageableDTO.php';
+require_once '../../../../config.php';
+require_once(ROOT.'\src\main\dao\dbDAO.php');
+require_once(ROOT.'\src\main\model\productVariantsDTO.php');
+require_once(ROOT.'\src\main\model\pageableDTO.php');
 
 class productVariantsDAO extends dbDAO {
 
@@ -82,10 +86,10 @@ class productVariantsDAO extends dbDAO {
         if($pageableDTO != null) {
             $type = "";
             $params = array();
-            $key_words = $pageableDTO->getKey_words()!=null ? $pageableDTO->getKey_words():null;
-            $categoryId = $pageableDTO->getCategoryId()!=null ? $pageableDTO->getCategoryId():null;
-            $priceStart = $pageableDTO->getPriceStart()!=null ? $pageableDTO->getPriceStart():null;
-            $priceEnd = $pageableDTO->getPriceEnd()!=null ? $pageableDTO->getPriceEnd():null;
+            $key_words = $pageableDTO->getKey_words();
+            $categoryId = $pageableDTO->getCategoryId();
+            $priceStart = $pageableDTO->getPriceStart();
+            $priceEnd = $pageableDTO->getPriceEnd();
             if($categoryId != null) {
                 $sql .= " WHERE sp.id_danh_muc = ?";
                 $type .= "i";

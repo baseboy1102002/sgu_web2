@@ -10,7 +10,7 @@ let pageable = {
 $(document).ready(function () {
     $.ajax({
         type: "GET",
-        url: "../../../main/controller/Web/api/productVariantsAPI.php",
+        url: "../../../main/controller/api/productVariantsAPI.php",
         data: pageable,
         dataType: "json",
         success: function (response) {
@@ -20,7 +20,7 @@ $(document).ready(function () {
     })
     $.ajax({
         type: "GET",
-        url: "../../../main/controller/Web/api/categoryAPI.php",
+        url: "../../../main/controller/api/categoryAPI.php",
         data: ``,
         success: function(resp){
             // categories = JSON.parse(JSON.stringify(resp));
@@ -34,7 +34,6 @@ $(document).ready(function () {
 });
 
 function loadProduct(products) {
-    console.log(pageable)
     if($.isEmptyObject(products)) {
         $("#row2").html("<h2>Không tìm thấy sản phẩm!</h2>");    
         return
@@ -96,7 +95,7 @@ function loadPage(totalItem) {
                 pageable.page = index+1;
                 $.ajax({
                     type: "GET",
-                    url: "../../../main/controller/Web/api/productVariantsAPI.php",
+                    url: "../../../main/controller/api/productVariantsAPI.php",
                     data: pageable,
                     dataType: "json",
                     success: function (response) {
@@ -108,6 +107,7 @@ function loadPage(totalItem) {
         })
     });
 }
+
 
 function loadCategory(categories, categoryList_querySelector, categoryItems_querySelector) {
     let str = categoryList_querySelector === ".mobile_category-list" ? 
@@ -140,7 +140,7 @@ function loadCategory(categories, categoryList_querySelector, categoryItems_quer
                 pageable.priceEnd = null
                 $.ajax({
                     type: "GET",
-                    url: "../../../main/controller/Web/api/productVariantsAPI.php",
+                    url: "../../../main/controller/api/productVariantsAPI.php",
                     data: pageable,
                     dataType: "json",
                     success: function (response) {
@@ -166,7 +166,7 @@ function search() {
             $(".header_searhbar-input").val("");
             $.ajax({
                 type: "GET",
-                url: "../../../main/controller/Web/api/productVariantsAPI.php",
+                url: "../../../main/controller/api/productVariantsAPI.php",
                 data: pageable,
                 dataType: "json",
                 success: function (response) {
@@ -196,7 +196,7 @@ function filterByPrice() {
                 // }
                 $.ajax({
                     type: "GET",
-                    url: "../../../main/controller/Web/api/productVariantsAPI.php",
+                    url: "../../../main/controller/api/productVariantsAPI.php",
                     data: pageable,
                     dataType: "json",
                     success: function (response) {
@@ -212,3 +212,11 @@ function filterByPrice() {
         });
     });
 }
+
+// LOG OUT 
+$("#logout_btn").click(function (e) { 
+    e.preventDefault();
+    $.post( "../../../main/controller/api/accountAPI.php", function(data) {
+        window.location.replace('./index.php')
+      });
+});

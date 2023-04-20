@@ -1,6 +1,8 @@
 <?php
+// require_once 'D:\XAMPP\htdocs\ThaiTranWeb2\src\main\service\categoryService.php';
+require_once '../../../../config.php';
+require_once (ROOT.'\src\main\service\categoryService.php');
 
-require_once 'D:\XAMPP\htdocs\ThaiTranWeb2\src\main\service\categoryService.php'; 
 
 class categoryAPI{
 

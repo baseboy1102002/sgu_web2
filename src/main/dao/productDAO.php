@@ -1,7 +1,10 @@
 <?php
 
-include_once 'D:\XAMPP\htdocs\ThaiTranWeb2\src\main\dao\dbDAO.php';
-include_once 'D:\XAMPP\htdocs\ThaiTranWeb2\src\main\model\productDTO.php';
+// include_once 'D:\XAMPP\htdocs\ThaiTranWeb2\src\main\dao\dbDAO.php';
+// include_once 'D:\XAMPP\htdocs\ThaiTranWeb2\src\main\model\productDTO.php';
+require_once '../../../../config.php';
+require_once(ROOT.'\src\main\dao\dbDAO.php');
+require_once(ROOT.'\src\main\model\productDTO.php');
 
 class productDAO extends dbDAO {
 

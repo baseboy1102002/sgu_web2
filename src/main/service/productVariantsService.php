@@ -1,7 +1,10 @@
 <?php
 
-include_once 'D:\XAMPP\htdocs\ThaiTranWeb2\src\main\dao\productVariantsDAO.php';
-include_once 'D:\XAMPP\htdocs\ThaiTranWeb2\src\main\model\productVariantsDTO.php';
+// include_once 'D:\XAMPP\htdocs\ThaiTranWeb2\src\main\dao\productVariantsDAO.php';
+// include_once 'D:\XAMPP\htdocs\ThaiTranWeb2\src\main\model\productVariantsDTO.php';
+require_once '../../../../config.php';
+require_once(ROOT.'\src\main\dao\productVariantsDAO.php');
+require_once(ROOT.'\src\main\model\productVariantsDTO.php');
 
 class productVariantsService {
 

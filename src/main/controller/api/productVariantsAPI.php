@@ -1,8 +1,8 @@
 <?php
 
-// require_once ROOT . './src/main/service/productService.php';
-
-require_once 'D:\XAMPP\htdocs\ThaiTranWeb2\src\main\service\productVariantsService.php'; 
+// require_once 'D:\XAMPP\htdocs\ThaiTranWeb2\src\main\service\productVariantsService.php';
+require_once '../../../../config.php';
+require_once (ROOT.'\src\main\service\productVariantsService.php');
 
 class productVariantsAPI{
 
