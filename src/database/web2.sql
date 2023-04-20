@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th4 19, 2023 lúc 08:34 AM
+-- Thời gian đã tạo: Th4 20, 2023 lúc 07:49 PM
 -- Phiên bản máy phục vụ: 10.4.25-MariaDB
 -- Phiên bản PHP: 8.1.10
 
@@ -232,6 +232,14 @@ CREATE TABLE `nhom_quyen` (
   `ten_nhom_quyen` varchar(30) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Đang đổ dữ liệu cho bảng `nhom_quyen`
+--
+
+INSERT INTO `nhom_quyen` (`id`, `ten_nhom_quyen`) VALUES
+(1, 'user'),
+(2, 'admin');
+
 -- --------------------------------------------------------
 
 --
@@ -312,9 +320,19 @@ CREATE TABLE `tai_khoan` (
   `id` int(5) NOT NULL,
   `ten_tk` varchar(40) NOT NULL,
   `password` varchar(16) NOT NULL,
+  `email` varchar(50) NOT NULL,
   `id_nhom_quyen` int(5) NOT NULL,
   `status` int(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Đang đổ dữ liệu cho bảng `tai_khoan`
+--
+
+INSERT INTO `tai_khoan` (`id`, `ten_tk`, `password`, `email`, `id_nhom_quyen`, `status`) VALUES
+(1, 'user', 'user', 'user@gmail.com', 1, 1),
+(2, 'admin', 'admin', 'admin@gmail.com', 2, 1),
+(5, 'thai', '123456', 'thai@gmail.com', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -485,7 +503,7 @@ ALTER TABLE `gio_hang`
 -- AUTO_INCREMENT cho bảng `nhom_quyen`
 --
 ALTER TABLE `nhom_quyen`
-  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT cho bảng `phieu_nhap`
@@ -509,7 +527,7 @@ ALTER TABLE `skus`
 -- AUTO_INCREMENT cho bảng `tai_khoan`
 --
 ALTER TABLE `tai_khoan`
-  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT cho bảng `thuoc_tinh`
