@@ -98,13 +98,20 @@ class accountAPI{
         $account_id = $row[1];
         $account_username = $row[2];
         if ($count > 0) {
-            // dang nhap thanh cong
+            // dang nhap thanh cong, reset session
+            session_start();
+            if (isset($_SESSION)) {
+                $_SESSION = array();
+                session_destroy();
+            }
             session_start();
             $_SESSION['account_id'] = $account_id;
             $_SESSION['account_ten-nhom-quyen'] = $this->accountService->findRoleByUserNameAndPassword($data['username'], $data['password'])->fetch_array()[0];
             $_SESSION['account_username'] = $account_username;
             header('Content-Type: application/json');
-            echo json_encode($account_id);   
+            header('HTTP/1.0 204 No Content');
+
+            // echo json_encode($account_id);   
         } else {
             // dang nhap that bai
             header('HTTP/1.0 404 Not Found');

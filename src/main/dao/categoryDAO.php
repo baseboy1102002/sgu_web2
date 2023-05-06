@@ -1,7 +1,5 @@
 <?php
 
-// include_once 'D:\XAMPP\htdocs\ThaiTranWeb2\src\main\dao\dbDAO.php';
-// include_once 'D:\XAMPP\htdocs\ThaiTranWeb2\src\main\model\categoryDTO.php';
 require_once '../../../../config.php';
 require_once(ROOT.'\src\main\dao\dbDAO.php');
 require_once(ROOT.'\src\main\model\categoryDTO.php');
@@ -9,7 +7,7 @@ require_once(ROOT.'\src\main\model\categoryDTO.php');
 class categoryDAO extends dbDAO {
 
     public function findById($id) {
-        $sql = "SELECT * FROM category WHERE id = ?";
+        $sql = "SELECT * FROM danh_muc WHERE id = ?";
         $result = $this->read($sql,"i",$id);
         return $result;
     }
@@ -22,18 +20,18 @@ class categoryDAO extends dbDAO {
 
     // return type: Int (id product)
     public function save($categoryDTO) {
-        $sql = "INSERT INTO category (ten_danh_muc) VALUES (?)";
-        $result = $this->insert($sql, "s" , $categoryDTO->getName());
+        $sql = "INSERT INTO danh_muc (ten_danh_muc) VALUES (?)";
+        $result = $this->insert($sql, "s" , $categoryDTO->getTen_danh_muc());
         return $result;
     }
 
     public function updateCategory($categoryDTO) {
-        $sql = "UPDATE category SET name=? WHERE id=?";
-        $this->update($sql, "si", $categoryDTO->getName());
+        $sql = "UPDATE danh_muc SET ten_danh_muc=? WHERE id=?";
+        $this->update($sql, "si", $categoryDTO->getTen_danh_muc());
     }
 
     public function deleteCategory($id) {
-        $sql = "DELETE FROM category WHERE id=?";
+        $sql = "DELETE FROM danh_muc WHERE id=?";
         $this->update($sql, "i", $id);
     }
         

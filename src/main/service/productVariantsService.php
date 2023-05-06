@@ -31,20 +31,32 @@ class productVariantsService {
     // return type: Int (id product)
     public function save($productVariantsDTO) {
         $result = $this->productVariantsDAO->save($productVariantsDTO);
-        return $result;
+        if($result!=null) {
+            $productVariantsDTO->setId($result);
+            return $this->productVariantsDAO->save_Variant_Attr_Value($productVariantsDTO);
+        } else return false;
     }
 
     public function updateProductVariant($productVariantsDTO) {
-        return $this->productVariantsDAO->updateProductVariant($productVariantsDTO);
+        $result = $this->productVariantsDAO->updateProductVariant($productVariantsDTO);
+        if($result) {
+            $this->productVariantsDAO->update_Variant_Attr_Value($productVariantsDTO);
+        }
+        return $result;
     }
 
     public function deleteProductVariant($sku_id) {
-        return $this->productVariantsDAO->deleteProductVariant($sku_id);
+        $result =  $this->productVariantsDAO->deleteProductVariant($sku_id);
+        if($result)
+            $this->productVariantsDAO->deleteProductVariantAttr($sku_id);
+        return $result;
     }
 
     public function countResults($pageableDTO=null) {
-        if($pageableDTO==null) return $this->productVariantsDAO->countResults();
-        else return $this->productVariantsDAO->countResults($pageableDTO);
+        if($pageableDTO==null)
+            return $this->productVariantsDAO->countResults();
+        else
+            return $this->productVariantsDAO->countResults($pageableDTO);
     }
 }
 

@@ -5,13 +5,16 @@
 require_once '../../../../config.php';
 require_once(ROOT.'\src\main\dao\productDAO.php');
 require_once(ROOT.'\src\main\model\productDTO.php');
+require_once(ROOT.'\src\main\dao\productVariantsDAO.php');
 
 class productService {
 
     private $productDAO;
+    private $productVariantsDAO;
 
     function __construct() {
         $this->productDAO = new productDAO();
+        $this->productVariantsDAO = new productVariantsDAO();
     }
 
     public function findById($id) {
@@ -19,8 +22,8 @@ class productService {
         return $result;
     }
     
-    public function findAll() {
-        $result = $this->productDAO->findAll();
+    public function findAll($pageableDTO) {
+        $result = $this->productDAO->findAll($pageableDTO);
         return $result;
     }
 
@@ -35,7 +38,19 @@ class productService {
     }
 
     public function deleteProduct($id) {
-        return $this->productDAO->deleteProduct($id);
+        $result = $this->productDAO->deleteProduct($id);
+        if($result) {
+            $this->productVariantsDAO->delete_ProductVariant_ByProductId($id);
+            $this->productVariantsDAO->delete_ProductVariantAttr_ByProductId($id);
+        }
+        return $result;
+    }
+
+    public function countRs($pageableDTO=null) {
+        if($pageableDTO==null)
+            return $this->productDAO->countRs();
+        else
+            return $this->productDAO->countRs($pageableDTO);
     }
 }
 

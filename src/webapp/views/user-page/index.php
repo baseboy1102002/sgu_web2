@@ -11,19 +11,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shopee clone</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/css/bootstrap.min.css" integrity="sha512-SbiR/eusphKoMVVXysTKG/7VseWii+Y3FdHrt0EpKgpToZeemhqHeZeLWLhJutz/2ut2Vw1uQEj2MbRF+TVBUA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/js/bootstrap.min.js" integrity="sha512-1/RvZTcCDEUjY/CypiMz+iqqtaoQfAITmNSJY17Myp4Ms5mdxPS5UV7iOfdZoxcGhzFbOm6sntTKJppjvuhg4g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <link rel="stylesheet" href="../style/grid_lib.css">
-    <link rel="stylesheet" href="../style/base.css">
     <link rel="stylesheet" href="./style.css">
     <link rel="stylesheet" href="../style/responsive.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../components/user/footer/footer.css">
-    <script src="../components/user/footer/footer.js" defer></script>
-    <!-- <link rel="stylesheet" href="../../../main/controller/Web/api/categoryAPI.php"> -->
+    <link rel="stylesheet" href="../components/footer/footer.css">
+    
+    
 </head>
-<!-- <body onload="renderCart()"> -->
+
 <body>
     <!-- all web content -->
     <div class="app">
@@ -33,15 +34,15 @@
                 <!-- header navbar section-->
                 <div class="header_nav hide_on_table-mobile">
                     <ul class="header_list">
-                        <li class="header_items"><a class="seperate" href="../landing-page/landing_page.html">Giới thiệu về shop</a></li>
+                        <li class="header_items"><a class="seperate" href="../landing-page/landing_page.php">Giới thiệu về shop</a></li>
                         <li class="header_items"><a class="seperate" href="">Chính sách bảo hành</a></li>
                         <li class="header_items qr_relative"><a class="seperate" href="">Tải ứng dụng</a>
                             <div class="header_qr">
-                                <img src="../assets/logo/qr_code.png" alt="QR Code" class="header_qr-scan">
+                                <img src="../../assets/logo/qr_code.png" alt="QR Code" class="header_qr-scan">
                                 <div class="header_qr-apps">
-                                    <img src="../assets/logo/app_store.png" alt="app store" class="header_qr-link">
-                                    <img src="../assets/logo/google_play_store.png" alt="google playstore" class="header_qr-link">
-                                    <img src="../assets/logo/app_gallery.png" alt="app gallery" class="header_qr-link">
+                                    <img src="../../assets/logo/app_store.png" alt="app store" class="header_qr-link">
+                                    <img src="../../assets/logo/google_play_store.png" alt="google playstore" class="header_qr-link">
+                                    <img src="../../assets/logo/app_gallery.png" alt="app gallery" class="header_qr-link">
                                 </div>
                             </div>
                         </li>
@@ -96,8 +97,8 @@
                                 ';
                             } else {
                                 echo '
-                                    <li class="header_items signUp_logIn"><a class="seperate" href="./login.php">Đăng Ký</a></li>
-                                    <li class="header_items signUp_logIn"><a href="./login.php">Đăng Nhập</a></li>
+                                    <li class="header_items signUp_logIn"><a class="seperate" href="../login/login.php">Đăng Ký</a></li>
+                                    <li class="header_items signUp_logIn"><a href="../login/login.php">Đăng Nhập</a></li>
                                 ';
                             }
                         ?>
@@ -127,7 +128,7 @@
                 <!-- header search section -->
                 <div class="header_search">
                     <div class="header_logo">
-                        <img src="../assets/logo/squad14 (1)_transparent.png" height="65px" width="192px"> <!--logo o day-->
+                        <img src="../../assets/logo/squad14 (1)_transparent.png" height="65px" width="192px"> <!--logo o day-->
                     </div>
                     <div class="header_searchbar header_searchbar-hide">
                         <input class="header_searchbar-input mobile_searchbar-input" type="text" placeholder="Nhập sản phẩm cần tìm kiếm">
@@ -302,7 +303,11 @@
         </div>
 
         <!-- footer -->
-        <footer class="app_footer"></footer>
+        <footer class="app_footer">
+            <?php 
+                include '../components/footer/footer.php'
+            ?>
+        </footer>
 
         <!-- buy form modal -->
         <div class="confirmBuy_form-modal confirmBuy_modal-hide">
@@ -352,7 +357,77 @@
             </div>
         </div>
 
-        <!-- sign up/ login modal -->
+        <!-- product detail modal -->
+
+        <div class="modal fade" id="detail_product" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="exampleModalLabel">CHI TIẾT SẢN PHẨM</h3>
+                    <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                    <!-- <span aria-hidden="true">&times;</span> -->
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <!-- col1: sku image -->
+                            <div class="col-md-6 ml-auto">
+                                <div class="product-img" style="background-image: url(../assets/products_img/default.jpg)"></div>
+                                <!-- variants list -->
+                                    <div class="variants_list">
+                                        <!-- <div class="variant_item_box">Variant1</div>
+                                        <div class="variant_item_box">Variant2</div>
+                                        <div class="variant_item_box">Variant3</div> -->
+                                    </div>
+                            </div>
+                            <!-- col2: sku infomation -->
+                            <div class="col-md-6 ml-auto">
+                                <div id="pd_detail_item">
+                                    <h3 class="product-name">SKU Name</h3>
+                                    <div class="product-price">SKU price</div>
+                                    <div class="product-desc">PRODUCT Description</div>
+                                    <div class="product-quantity">SKU quantity</div>
+                                    <div class="btn-wrapper">
+                                        <button class="product-addToCartBtn">Thêm vào giỏ hàng</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- <div class="modal-body" id="detail_product">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-4">.col-md-4</div>
+                    <div class="col-md-4 ml-auto">.col-md-4 .ml-auto</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3 ml-auto">.col-md-3 .ml-auto</div>
+                    <div class="col-md-2 ml-auto">.col-md-2 .ml-auto</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 ml-auto">.col-md-6 .ml-auto</div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-9">
+                        Level 1: .col-sm-9
+                        <div class="row">
+                        <div class="col-8 col-sm-6">
+                            Level 2: .col-8 .col-sm-6
+                        </div>
+                        <div class="col-4 col-sm-6">
+                            Level 2: .col-4 .col-sm-6
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> -->
         
         <!-- review order notes modal -->
         <div class="orderNote_modal orderNote_modal-hide">

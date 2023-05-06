@@ -1,7 +1,5 @@
 <?php
 
-// include_once 'D:\XAMPP\htdocs\ThaiTranWeb2\src\main\dao\categoryDAO.php';
-// include_once 'D:\XAMPP\htdocs\ThaiTranWeb2\src\main\model\categoryDTO.php';
 require_once '../../../../config.php';
 require_once(ROOT.'\src\main\dao\categoryDAO.php');
 require_once(ROOT.'\src\main\model\categoryDTO.php');

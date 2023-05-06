@@ -4,11 +4,6 @@
         private $id;
         private $ten_danh_muc;
 
-        // function __construct($id, $ten_danh_muc) {
-        //     $this->id = $id;
-        //     $this->ten_danh_muc = $ten_danh_muc;
-        // }
-
         public function setId($id) {
             $this->id = $id;
         }

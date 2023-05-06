@@ -8,6 +8,8 @@
         private $img_path;
         private $in_stock;
         private $id_danh_muc;
+        private $created_date;
+        private $modified_date;
 
         // function __construct() {
             
@@ -57,6 +59,19 @@
         }
         public function getIDDanhmuc() {
             return $this->id_danh_muc;
+        }
+
+        public function setModified_date($modified_date) {
+            $this->modified_date  =$modified_date;
+        }
+        public function getModified_date() {
+            return $this->modified_date;
+        }
+        public function setCreated_date($created_date) {
+            $this->created_date  =$created_date;
+        }
+        public function getCreated_date() {
+            return $this->created_date;
         }
     }
 ?>

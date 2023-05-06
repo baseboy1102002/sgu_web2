@@ -36,7 +36,7 @@ li {
     color: var(--white-color);
 }
 
-.btn {
+/* .btn {
     font-size: 1.4rem;
     height: 35px;
     padding: 4px 16px;
@@ -47,4 +47,4 @@ li {
     display: flex;
     justify-content: center;
     align-items: center;
-}
+} */

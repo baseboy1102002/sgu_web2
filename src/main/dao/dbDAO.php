@@ -4,7 +4,7 @@ class dbDAO{
 	private $host  = 'localhost:3306';
     private $user  = 'root';
     private $password   = "";
-    private $database  = "web2"; 
+    private $database  = "web2_demo"; 
     private $conn;
 
     public function getConnection(){		
@@ -15,6 +15,7 @@ class dbDAO{
 			return $this->conn;
 		}
     }
+
 
     // for database select from tables
     public function read($sql, $type=null, ...$params){

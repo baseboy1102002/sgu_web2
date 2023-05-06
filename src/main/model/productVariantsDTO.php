@@ -8,6 +8,10 @@
         private $so_luong;
         private $in_stock;
         private $id_san_pham;
+        private $id_thuoc_tinh = array();
+        private $id_gia_tri = array();
+        private $created_date;
+        private $modified_date;
 
         // function __construct() {
             
@@ -57,6 +61,33 @@
         }
         public function getIDSan_pham() {
             return $this->id_san_pham;
+        }
+
+        public function setId_thuoc_tinh($id_thuoc_tinh) {
+            $this->id_thuoc_tinh = $id_thuoc_tinh;
+        }
+        public function getId_thuoc_tinh() {
+            return $this->id_thuoc_tinh;
+        }
+
+        public function setId_gia_tri($id_gia_tri) {
+            $this->id_gia_tri = $id_gia_tri;
+        }
+        public function getId_gia_tri() {
+            return $this->id_gia_tri;
+        }
+
+        public function setModified_date($modified_date) {
+            $this->modified_date  =$modified_date;
+        }
+        public function getModified_date() {
+            return $this->modified_date;
+        }
+        public function setCreated_date($created_date) {
+            $this->created_date  =$created_date;
+        }
+        public function getCreated_date() {
+            return $this->created_date;
         }
     }
 ?>
