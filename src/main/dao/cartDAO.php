@@ -14,5 +14,10 @@
             $result=$this->insert($sql,"i",$_SESSION['account_id']);
             return $result;
         }
+        public function deleteCart($id){
+            $sql="DELETE FROM `gio_hang` WHERE id = ?";
+            $result= $this->update($sql,"i",$id);
+            return $result;
+        }
     }
 ?>

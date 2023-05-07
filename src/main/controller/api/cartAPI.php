@@ -88,6 +88,7 @@ class cartAPI {
         $cartDetailDTO = new cartDetailDTO($data['id_gio_hang'],$data['id_sku'],1);
         $check= $this->cartDetailService->checkProductInCart($cartDetailDTO);
         if($check->num_rows==0){        //Sản phẩm chưa có trong giỏ
+            $check=$this->productVariantsService->findById($data['id_sku']);
             $result= $this->cartDetailService->addToCart($cartDetailDTO);
             if($result!==null){             //Thêm thành công
                 echo json_encode($result);
@@ -115,6 +116,13 @@ class cartAPI {
             header('HTTP/1.0 500 Internal Server Error');
         }
     }
+    public function deleteCart($cartId){
+        $result=$this->cartService->deleteCart($cartId);
+        if($result==true){
+            header('HTTP/1.0 201 Created');
+        }else
+            header('HTTP/1.0 500 Internal Server Error');
+    }
 }
 
 
@@ -137,9 +145,12 @@ switch ($method) {
         break;
     case 'DELETE':
         if(isset($_GET['cartId'])&&isset($_GET['itemId'])){
-            $id=intval($_GET['cartId']); $itemId=intval($_GET['itemId']);
+            $cartId=intval($_GET['cartId']); $itemId=intval($_GET['itemId']);
             $cartAPI->removeFromCart($cartId,$itemId);
-        }
+        }else {
+        $cartId=intval($_GET['cartId']);
+        $cartAPI->deleteCart($cartId);
+        }       
         break;
 }
 ?>

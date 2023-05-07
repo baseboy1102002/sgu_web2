@@ -11,7 +11,7 @@ require_once(ROOT.'\src\main\model\pageableDTO.php');
 class productVariantsDAO extends dbDAO {
 
     public function findById($id) {
-        $sql = "SELECT skus.id, skus.sku_name, skus.don_gia, skus.so_luong, skus.id_sp, btsp.id_thuoc_tinh , tt.ten_thuoc_tinh, btsp.id_gia_tri_tt, gttt.gia_tri FROM skus";
+        $sql = "SELECT skus.id, skus.sku_name, skus.don_gia, skus.so_luong, skus.id_sp,skus.in_stock, btsp.id_thuoc_tinh , tt.ten_thuoc_tinh, btsp.id_gia_tri_tt, gttt.gia_tri FROM skus";
         $sql .= " INNER JOIN ct_tt_bien_the_sp as btsp ON skus.id = btsp.skus_id";
         $sql .= " INNER JOIN thuoc_tinh as tt ON btsp.id_thuoc_tinh = tt.id";
         $sql .= " INNER JOIN gia_tri_thuoc_tinh as gttt ON btsp.id_gia_tri_tt = gttt.id";

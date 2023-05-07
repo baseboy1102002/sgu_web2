@@ -21,11 +21,14 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="../components/footer/footer.css">
+    <link rel="stylesheet" href="../components/toastNofication/toast.css">
     
     
 </head>
 
 <body>
+    <!-- toast message -->
+    <div id="toast"></div>
     <!-- all web content -->
     <div class="app">
         <!-- web header -->
@@ -440,6 +443,7 @@
 
     </div>
     <script src="./test.js"></script>
+    <script src="../components/toastNofication/toast.js"></script>
     <!-- <script src="./slide.js"></script> -->
 </body>
 </html>

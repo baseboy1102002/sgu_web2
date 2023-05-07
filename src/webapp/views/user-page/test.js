@@ -339,7 +339,7 @@ function ReadyCart() {
             loadCartBtn();
         })
     }else {
-            $('.product_items-addBtn').each(function (index,item) {
+            $('.product_items-addBtn,.product-addToCartBtn').each(function (index,item) {
                 item.onclick = function() {
                     alert("Bạn chưa đăng nhập"); 
                 } 
@@ -354,14 +354,13 @@ function ReadyCart() {
 function addToCart(){
     // $('.product_items-addBtn,.product-addToCartBtn').each(function(index,item){
 
-    $('.product_items-addBtn').each(function(index,item){
+    $('.product_items-addBtn,.product-addToCartBtn').each(function(index,item){
         item.onclick = function () {
             let id_sku;
             if($(this).hasClass("product_items-addBtn")){
                 id_sku = $(getParentElement(item, ".product_items")).data('sku-id');
-                console.log(id_sku);
             }
-            else  id_sku = $("#pd_detail_item").data('data-sku-id');
+            else  id_sku =  $(getParentElement(item, "#pd_detail_item")).attr('data-sku-id');
             let data ={};
             data['id_gio_hang']=id_gio_hang;
             data['id_sku']=id_sku;
@@ -524,9 +523,8 @@ function updateCart(){
                     response.inStock.forEach(element => {
                         $str+=`${element}
      `;
-                    }
-                    )}
-
+                    })
+                };
                 alert($str);
                 renderCart();
             },
@@ -578,14 +576,22 @@ function payCart(){
             $(response).each(function (index, element) {
                 const billItem = document.createElement("tr");
                 $(billItem).addClass("row");
-                billItem.innerHTML=`
+                let str=`
                 <th scope="col" class="col-sm-1">${index*1+1}</th>
                     <td scope="col" class="col-sm-2"><img src="${imgFolder}${element.img_path}" alt="" class="img-fluid"></td>
                     <td scope="col" class="col-sm-4">${element.ten_sp}</td>
-                    <td scope="col" class="col-sm-2">${money.format(element.don_gia)}</td>
+                    `
+                if(element.in_stock==1){
+                str+=   ` <td scope="col" class="col-sm-2">${money.format(element.don_gia)}</td>
                     <td scope="col" class="col-sm-1">${element.quantity}</td>
-                    <td scope="col" class="col-sm-2">${money.format(element.don_gia*element.quantity)}</t
+                    <td scope="col" class="col-sm-2">${money.format(element.don_gia*element.quantity)}</td>
                 `             
+            }else str+=`
+            <td scope="col" class="col-sm-2"></td>
+            <td scope="col" class="col-sm-1"><span style="color:red">Đã hết hàng !!!</span></td>
+            <td scope="col" class="col-sm-2"></td>
+            `;
+            billItem.innerHTML=str;
                 $("#payment-check").children("tbody").append(billItem);
             });
         
@@ -613,7 +619,7 @@ $(".payment-infor").submit(function (e) {
             data: JSON.stringify(data),
             dataType: "json",
             success: function (response) {
-                alert("Thanh cong");
+                deleteCart();
             },
             error: function (jqXHR, exception) {
                 console.log(jqXHR);
@@ -623,6 +629,16 @@ $(".payment-infor").submit(function (e) {
         });
     }
 });
+function deleteCart(){
+    $.ajax({
+        type: "DELETE",
+        url: `../../../main/controller/api/cartAPI.php?cartId=${id_gio_hang}`,
+        success: function (response) {
+            alert("Thanh cong");
+            window.location.replace("../user-page/index.php");
+        }
+    });
+}
 function PhoneValid() {
     let phone = $("#payment-phone").val();
     let regex = /((09|03|07|08|05)+([0-9]{8})\b)/g;

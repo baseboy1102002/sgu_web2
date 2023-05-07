@@ -18,5 +18,9 @@ class cartService {
         $result = $this->cartDAO->createCart();
         return $result;
     }
+    public function deleteCart($id){
+        $result= $this->cartDAO->deleteCart($id);
+        return $result;
+    }
 }
 ?>

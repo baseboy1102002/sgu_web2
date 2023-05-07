@@ -36,7 +36,7 @@ class orderAPI {
         $check = true;
         foreach($orderItems as $item=>$value){
             $sku = $this->productVariantsService->findById($value->getId_sku())->fetch_assoc();
-            if($sku==null){
+            if($sku==null || $sku['in_stock']==0){
                 $check = false;
                 break;
             }
