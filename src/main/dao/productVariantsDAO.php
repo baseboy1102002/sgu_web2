@@ -183,6 +183,10 @@ class productVariantsDAO extends dbDAO {
             return $this->read($sql, $type, ...$params);
         } else return $this->read($sql);
     }
+    public function updateQuantity($id,$quantity){
+        $sql = "UPDATE skus SET so_luong =so_luong -? WHERE id =?";
+        return $this->update($sql,"ii",$quantity,$id);
+    }
 }
 
 ?>

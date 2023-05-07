@@ -58,6 +58,9 @@ class productVariantsService {
         else
             return $this->productVariantsDAO->countResults($pageableDTO);
     }
+    public function updateQuantity($id,$quantity){
+        return $this->productVariantsDAO->updateQuantity($id,$quantity);
+    }
 }
 
 ?>

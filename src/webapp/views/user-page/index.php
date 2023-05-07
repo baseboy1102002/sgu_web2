@@ -67,6 +67,7 @@
                         <?php
                             if(isset($_SESSION["account_id"])) {
                                 echo '
+                                    <input type="hidden" id="logged-in" style="display:none" value='.$_SESSION["account_id"].'>
                                     <li class="header_items user_account-pc">
                                         <i class="fas fa-user-alt"></i>
                                         <span>'.$_SESSION["account_username"].'</span>
@@ -141,27 +142,6 @@
                         <i class="fa-solid fa-magnifying-glass mobile_header-searchBtn"></i>
                         <i class="fa-solid fa-cart-shopping header_cart-icon"></i>
                         <!-- render cart box -->
-                        <div class="cart_box cart_box-hide">
-                            <div class="cart_list">
-                                <!-- <div class="cart_items">
-                                    <div class="cart_items-img" style="background-image: url(https://cf.shopee.vn/file/3355a767c028c484757bb7000e71e339)"></div>
-                                    <div class="cart_items-body">
-                                        <div class="cart_item-info">
-                                            <div class="cart_items-name">Tên sản phẩm 99</div>
-                                            <div class="cart_items-price">1.000.000đ</div>
-                                        </div>
-                                        <div class="cart_items-quantity">
-                                            <i class="fa-sharp fa-solid fa-chevron-up increase"></i>
-                                            4
-                                            <i class="fa-solid fa-chevron-down decrease"></i>
-                                        </div>
-                                        <div class="cart_items-total">2.000.000đ</div>
-                                        <i class="fa-solid fa-trash cart_items-trash cart_items-deleteBtn"></i>
-                                    </div>
-                                </div> -->
-                            </div>
-                            <div class="cart_nofi">Không tìm thấy sản phẩm</div>
-                        </div>
                         <i class="fa-solid fa-bars mobile_hambuger-list"></i>
                     </div>
                 </div>
@@ -309,53 +289,7 @@
             ?>
         </footer>
 
-        <!-- buy form modal -->
-        <div class="confirmBuy_form-modal confirmBuy_modal-hide">
-            <div class="confirmBuy_form-contain">
-                <div class="confirmBuy_form-closebtn">
-                    <i class="fa-solid fa-xmark"></i>
-                </div>
-                <form action="" method="post" class="confirmBuy_form-info">
-                    <div class="confirmBuy_form-header">
-                        <h3>Thông tin khách hàng mua</h3>
-                    </div>
-                    <div class="form-group">
-                        <label for="hovaten" class="form-label">Họ và Tên</label>
-                        <input type="text" name="hovaten" id="hovaten" class="form-input">
-                        <span class="form-messege"></span>
-                    </div>
-                    <div class="form-group">
-                        <label for="sdt" class="form-label">Số điện thoại <span style="color: red;">*</span></label>
-                        <input type="text" name="sdt" id="sdt" class="form-input">
-                        <span class="form-messege"></span>
-                    </div>
-                    <div class="form-group">
-                        <label for="address" class="form-label">Địa chỉ nhận hàng <span style="color: red;">*</span></label>
-                        <input type="text" name="address" id="address" class="form-input">
-                        <span class="form-messege"></span>
-                    </div>
-                    <button id="buy_btn" class="form-btn">Đặt mua</button>
-                </form>
-                <div class="buy_products-section">
-                    <!-- render here -->
-                    <h3>Kiểm tra sản phẩm bạn mua</h3>
-                    <div class="buy_product-list">
-                        <!-- <div class="buy_product-items">
-                            <div class="buy_product-img"></div>
-                            <div class="buy_product-body">
-                                <div class="buy_product-info">
-                                    <div class="buy_product-name">Tên sản phẩm 99</div>
-                                    <div class="buy_product-price">1.000.000đ</div>
-                                </div>
-                                <span class="buy_product-quantity">SL: 4</span>
-                                <span class="buy_product-total">2.000.000đ</span>
-                            </div>
-                        </div> -->
-                    </div>
-                    <div class="buy_product-totalAll"></div>
-                </div>
-            </div>
-        </div>
+       
 
         <!-- product detail modal -->
 
@@ -428,6 +362,63 @@
                 </div>
             </div>
         </div> -->
+
+
+        <!-- form thanh toán giỏ hàng -->
+        <div class="modal fade" id="payment-infor-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Modal title</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-sm-8">
+                            <table class="table" id="payment-check">
+                                <thead>
+                                    <tr class="row">
+                                    <th scope="col" class="col-sm-1">#</th>
+                                    <th scope="col" class="col-sm-2">img</th>
+                                    <th scope="col" class="col-sm-4">tên</th>
+                                    <th scope="col" class="col-sm-2">đơn giá</th>
+                                    <th scope="col" class="col-sm-1">SL</th>
+                                    <th scope="col" class="col-sm-2">total</th>
+                                    </tr>                       
+                                </thead>
+                                <tbody>
+                                    <!-- Generate chi tiết đơn hàng tại đây -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-sm-4">
+                        <form class="payment-infor">
+                        
+                            <div class="mb-3">
+                                <label for="payment-name" class="form-label">Họ và tên <span class="form-message" style="color: red;"></span></label>
+                                <input type="text" name="payment-name" class="form-control" id="payment-name" aria-describedby="emailHelp">
+                                <div id="emailHelp" class="form-text">We'll never share your in tư with anyone else.</div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="payment-phone" class="form-label">số điện thoại <span class="form-message" style="color: red;"></span></label>
+                                <input type="text" name="payment-phone"class="form-control" id=payment-phone>
+                            </div>
+                            <div class="mb-3">
+                                <label for="payment-address" class="form-label">Địa chỉ nhận hàng <span class="form-message" style="color: red;"></span></label>
+                                <input type="text" name="payment-address"class="form-control" id="payment-address">
+                            </div>
+                            <button type="submit" class="btn btn-outline-primary">Submit</button>
+                        </form>
+                        </div>
+                    </div>
+                </div>
+                
+                </div>
+            </div>
+            </div>
+
+
+
         
         <!-- review order notes modal -->
         <div class="orderNote_modal orderNote_modal-hide">
