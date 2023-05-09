@@ -199,30 +199,12 @@ class productAPI{
             if ($result) {
                 header('HTTP/1.0 204 No Content');
                 header('Content-Type: application/json');
-                echo json_encode($result);
             } else {
                 header('HTTP/1.0 500 Internal Server Error');
             }
         } else {
             header('HTTP/1.0 500 Internal Server Error');
         }
-
-        // $productDTO = new productDTO();
-        // $productDTO->setId($id);
-        // $productDTO->setTen_sp($data['ten_sp']);
-        // $productDTO->setDescription($data['description']);
-        // $productDTO->setImg_path($data['img_path']);
-        // $productDTO->setIn_stock($data['in_stock']);
-        // $productDTO->setIDdanhmuc($data['id_danh_muc']);
-        // $result = $this->productService->updateProduct($productDTO);
-
-        // if ($result) {
-        //     header('HTTP/1.0 204 No Content');
-        //     header('Content-Type: application/json');
-        //     // echo json_encode($result);
-        // } else {
-        //     header('HTTP/1.0 500 Internal Server Error');
-        // }
     }
 
     public function deleteProduct($id) {

@@ -13,7 +13,7 @@ class attributeDAO extends dbDAO {
     }
     
     public function findAll() {
-        $sql = "SELECT * FROM thuoc_tinh";
+        $sql = "SELECT * FROM thuoc_tinh WHERE is_delete != 1";
         $result = $this->read($sql);
         return $result;
     }
@@ -27,11 +27,11 @@ class attributeDAO extends dbDAO {
 
     public function updateAttribute($attributeDTO) {
         $sql = "UPDATE thuoc_tinh SET ten_thuoc_tinh=? WHERE id=?";
-        $this->update($sql, "si", $attributeDTO->getTen_thuoc_tinh());
+        $this->update2($sql, "si", $attributeDTO->getTen_thuoc_tinh(), $attributeDTO->getId());
     }
 
     public function deleteAttribute($id) {
-        $sql = "DELETE FROM thuoc_tinh WHERE id=?";
+        $sql = "UPDATE thuoc_tinh SET is_delete = 1 WHERE id=?";
         $this->update($sql, "i", $id);
     }
 }

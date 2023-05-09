@@ -26,7 +26,7 @@ function toast({ title = "", message = "", type = "info", duration = 3000 }) {
       const icon = icons[type];
       const delay = (duration / 1000).toFixed(2);
   
-      toast.classList.add("toast", `toast--${type}`);
+      toast.classList.add("mytoast", `toast--${type}`);
       toast.style.animation = `slideInLeft ease .3s, fadeOut linear 1s ${delay}s forwards`;
   
       toast.innerHTML = `

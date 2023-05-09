@@ -21,15 +21,34 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="../components/footer/footer.css">
-    <link rel="stylesheet" href="../components/toastNofication/toast.css">
+    <link rel="stylesheet" href="../components//toastNofication/toast.css">
     
-    
+    <style>
+        .modal-header {
+            background-color: var(--theme-color);
+            color: var(--white-color);
+        }
+        .modal-footer {
+            justify-content: center;
+        }
+        .btn {
+            font-size: 1.8rem;
+        }
+        .btn-close {
+            font-size: 1.8rem;
+            background-color: var(--white-color);
+        }
+        .pagination {
+            margin-top: 50px;
+            margin-bottom: 30px;
+        }
+    </style>
 </head>
 
 <body>
+    <!-- all web content -->
     <!-- toast message -->
     <div id="toast"></div>
-    <!-- all web content -->
     <div class="app">
         <!-- web header -->
         <header class="app_header">
@@ -85,7 +104,7 @@
                                                     echo '
                                                         <li class="account_pc-option administrator_page">
                                                             <i class="fa-solid fa-gear"></i>
-                                                            <span> Trang quản trị</span>
+                                                            <a href="../admin/admin_page.php" style="color: #333;">Trang quản trị</a>
                                                         </li>
                                                     ';
                                                 }
@@ -106,27 +125,6 @@
                                 ';
                             }
                         ?>
-                        <!-- <li class="header_items user_account-pc loginSuccess">
-                            <i class="fas fa-user-alt"></i>
-                            <span></span>
-                            <i class="fa-solid fa-chevron-down"></i>
-                            <div class="account_pc-selection">
-                                <ul class="account_pc-list">
-                                    <li class="account_pc-option myOrder_ist">
-                                        <i class = "fas fa-file-alt"></i>
-                                        <span> Đơn hàng của tôi</span>
-                                    </li>
-                                    <li class="account_pc-option administrator_page loginSuccess">
-                                        <i class="fa-solid fa-gear"></i>
-                                        <span> Trang quản trị</span>
-                                    </li>
-                                    <li class="account_pc-option logout_btn">
-                                        <i class="fas fa-sign-out"></i>
-                                        <span> Đăng xuất</span>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li> -->
                     </ul>
                 </div>
                 <!-- header search section -->
@@ -143,7 +141,7 @@
                     <!-- in pc: just icon cart, in mobile: this section has 2 more icons: search and list -->
                     <div class="header_cart">
                         <i class="fa-solid fa-magnifying-glass mobile_header-searchBtn"></i>
-                        <i class="fa-solid fa-cart-shopping header_cart-icon"></i>
+                        <i class="fa-solid fa-cart-shopping header_cart-icon"></i> <span id="total_cart_item"></span>
                         <!-- render cart box -->
                         <i class="fa-solid fa-bars mobile_hambuger-list"></i>
                     </div>
@@ -198,13 +196,13 @@
         <!-- web container -->
         <div class="app_container">
             <div class="grid">
-                <div class="grid_row app_content">
+                <div class="grid_row shop-section app_content">
                     <!-- slide -->
-                    <!-- <div class="Slides-content grid_column pc_col12 pc-wide_col12 tablet_col12 mobile_col12">
-                        <img class="mySlides" src="./assets/slide_image/image1.jpg" style="width:100%">
-                        <img class="mySlides" src="./assets/slide_image/image2.jpg" style="width:100%">
-                        <img class="mySlides" src="./assets/slide_image/image3.jpg" style="width:100%">
-                        <img class="mySlides" src="./assets/slide_image/image4.jpg" style="width:100%">
+                    <div class="Slides-content grid_column pc_col12 pc-wide_col12 tablet_col12 mobile_col12">
+                        <img class="mySlides" src="../../assets/slide_image/image1.jpg" style="width:100%">
+                        <img class="mySlides" src="../../assets/slide_image/image2.jpg" style="width:100%">
+                        <img class="mySlides" src="../../assets/slide_image/image3.jpg" style="width:100%">
+                        <img class="mySlides" src="../../assets/slide_image/image4.jpg" style="width:100%">
                         
                         <button class="button-left" onclick="plusDivs(-1)"><i class="fa-solid fa-chevron-left"></i></button>
                         <button class="button-right" onclick="plusDivs(1)"><i class="fa-solid fa-chevron-right"></i></button>
@@ -214,7 +212,7 @@
                             <div class="dot"></div>
                             <div class="dot"></div>
                         </div>
-                    </div> -->
+                    </div>
                     <!-- web container parting: 2 column for category navbar section-->
                     <div class="grid_column pc_col2 pc-wide_col2 tablet_col0 mobile_col0">
                         <!-- pc category navbar (only display on pc) -->
@@ -275,12 +273,23 @@
                             </div>
                         </div>
 
-                        <div class="pages">
+                        <ul class="pagination pagination-lg justify-content-center">
+                            <!-- <li class="page-item">a class="page-link" href="#">Previous</a></li>
+                            <li class="page-item"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item"><a class="page-link" href="#">Next</a></li> -->
+                        </ul>
+
+                        <!-- <div class="pages">
                             <ul class="page_list">
-                                <!-- render page list -->
+                                render page list
                             </ul>
-                        </div>
+                        </div> -->
                     </div>
+                </div>
+                <div class="grid_row cart-section hide cart-container">
+                    <!-- cart content here -->
                 </div>
             </div>
         </div>
@@ -301,8 +310,8 @@
                 <div class="modal-content">
                 <div class="modal-header">
                     <h3 class="modal-title" id="exampleModalLabel">CHI TIẾT SẢN PHẨM</h3>
-                    <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <!-- <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button> -->
                     <!-- <span aria-hidden="true">&times;</span> -->
                 </div>
                 <div class="modal-body">
@@ -319,7 +328,7 @@
                                     </div>
                             </div>
                             <!-- col2: sku infomation -->
-                            <div class="col-md-6 ml-auto">
+                            <div class="col-md-6 ml-auto" style="padding-top: 12px;">
                                 <div id="pd_detail_item">
                                     <h3 class="product-name">SKU Name</h3>
                                     <div class="product-price">SKU price</div>
@@ -369,56 +378,60 @@
 
         <!-- form thanh toán giỏ hàng -->
         <div class="modal fade" id="payment-infor-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-xl">
-                <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Modal title</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-sm-8">
-                            <table class="table" id="payment-check">
-                                <thead>
-                                    <tr class="row">
-                                    <th scope="col" class="col-sm-1">#</th>
-                                    <th scope="col" class="col-sm-2">img</th>
-                                    <th scope="col" class="col-sm-4">tên</th>
-                                    <th scope="col" class="col-sm-2">đơn giá</th>
-                                    <th scope="col" class="col-sm-1">SL</th>
-                                    <th scope="col" class="col-sm-2">total</th>
-                                    </tr>                       
-                                </thead>
-                                <tbody>
-                                    <!-- Generate chi tiết đơn hàng tại đây -->
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="col-sm-4">
-                        <form class="payment-infor">
-                        
-                            <div class="mb-3">
-                                <label for="payment-name" class="form-label">Họ và tên <span class="form-message" style="color: red;"></span></label>
-                                <input type="text" name="payment-name" class="form-control" id="payment-name" aria-describedby="emailHelp">
-                                <div id="emailHelp" class="form-text">We'll never share your in tư with anyone else.</div>
+            <div class="modal-dialog modal-xl modal-dialog-centered modal-fullscreen-sm-down">
+                <div class="modal-content" style="font-size: 1.6rem;">
+                    <div class="modal-header text-center">
+                        <h2 class="modal-title">THANH TOÁN ĐƠN HÀNG</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-sm-8 table-fixed">
+                                <table class="table table-hover" id="payment-check">
+                                    <thead class="table-light fixed-thead">
+                                        <tr class="row">
+                                        <th scope="col" class="col-sm-1">stt</th>
+                                        <th scope="col" class="col-sm-2 text-center">ảnh</th>
+                                        <th scope="col" class="col-sm-4">tên</th>
+                                        <th scope="col" class="col-sm-2">đơn giá</th>
+                                        <th scope="col" class="col-sm-1">SL</th>
+                                        <th scope="col" class="col-sm-2">total</th>
+                                        </tr>                       
+                                    </thead>
+                                    <tbody>
+                                        <!-- Generate chi tiết đơn hàng tại đây -->
+                                    </tbody>
+                                </table>
                             </div>
-                            <div class="mb-3">
-                                <label for="payment-phone" class="form-label">số điện thoại <span class="form-message" style="color: red;"></span></label>
-                                <input type="text" name="payment-phone"class="form-control" id=payment-phone>
+                            <div class="col-sm-4">
+                            <form class="payment-infor">
+                            
+                                <div class="mb-3">
+                                    <label for="payment-name" class="form-label">Họ và tên <span class="form-message" style="color: red;"></span></label>
+                                    <input type="text" name="payment-name" class="form-control form-control-lg" id="payment-name" aria-describedby="emailHelp">
+                                    <div id="emailHelp" class="form-text">We'll never share your in tư with anyone else.</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="payment-phone" class="form-label">Số điện thoại <span class="form-message" style="color: red;"></span></label>
+                                    <input type="text" name="payment-phone"class="form-control form-control-lg" id=payment-phone>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="payment-address" class="form-label">Địa chỉ nhận hàng <span class="form-message" style="color: red;"></span></label>
+                                    <input type="text" name="payment-address"class="form-control form-control-lg" id="payment-address">
+                                </div>
+                                <div class="text-center">
+                                    <button type="submit" class="btn btn-outline-primary">Đặt hàng</button> 
+                                </div>
+                            </form>
                             </div>
-                            <div class="mb-3">
-                                <label for="payment-address" class="form-label">Địa chỉ nhận hàng <span class="form-message" style="color: red;"></span></label>
-                                <input type="text" name="payment-address"class="form-control" id="payment-address">
-                            </div>
-                            <button type="submit" class="btn btn-outline-primary">Submit</button>
-                        </form>
                         </div>
                     </div>
-                </div>
-                
+                    <div class="modal-footer" id="payment_modal_total_price">
+                        
+                    </div>  
                 </div>
             </div>
-            </div>
+        </div>
 
 
 
@@ -442,8 +455,8 @@
         <div id="scroll_top_btn"><i class="fa-solid fa-arrow-up"></i></div>
 
     </div>
+    <script defer src="../components/toastNofication/toast.js"></script>
     <script src="./test.js"></script>
-    <script src="../components/toastNofication/toast.js"></script>
-    <!-- <script src="./slide.js"></script> -->
+    <script src="./slide.js"></script>
 </body>
 </html>

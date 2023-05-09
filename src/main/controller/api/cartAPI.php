@@ -26,7 +26,9 @@ class cartAPI {
         if($result!==null){
             header('HTTP/1.0 201 Created');
             header('Content-Type: application/json');
-            echo json_encode($result);
+            $response = array();
+            $response['id'] = $result;
+            echo json_encode($response);
         }else {
             echo 'lỗi cmmr';
         }

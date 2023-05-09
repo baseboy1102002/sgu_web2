@@ -41,9 +41,16 @@
         }
 
         public function findRoleByUserNameAndPassword($username, $password) {
-            $sql = "SELECT nq.ten_nhom_quyen FROM tai_khoan as tk INNER JOIN nhom_quyen AS nq ON tk.id_nhom_quyen=nq.id WHERE tk.ten_tk = ? AND tk.password = ?";
+            $sql = "SELECT nq.ten_nhom_quyen, nq.id FROM tai_khoan as tk INNER JOIN nhom_quyen AS nq ON tk.id_nhom_quyen=nq.id WHERE tk.ten_tk = ? AND tk.password = ?";
             $result = $this->read($sql, "ss", $username, $password);
             return $result;
         }
+
+        //  CODE T MỚI VIẾT NGÀY 9/5, M SỬA Ở TRÊN THOẢI MÁI, ĐỪNG ĐỘNG VÔ CODE DƯỚI NÀY //
+        public function updateIdNhomQuyen($id_nhom_quyen) {
+            $sql = "UPDATE tai_khoan SET id_nhom_quyen=1 WHERE id_nhom_quyen=?";
+            return $this->update2($sql, "i", $id_nhom_quyen);
+        }
+
     }
 ?>

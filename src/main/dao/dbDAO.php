@@ -4,7 +4,7 @@ class dbDAO{
 	private $host  = 'localhost:3306';
     private $user  = 'root';
     private $password   = "";
-    private $database  = "web2_demo"; 
+    private $database  = "web2"; 
     private $conn;
 
     public function getConnection(){		
@@ -67,6 +67,24 @@ class dbDAO{
             $conn->commit();
             $affectedRow = $stm->affected_rows;
             return $affectedRow>0 ? true:false;
+        } catch (Exception $e) {
+            $conn->rollback();
+            return false;
+        } finally {
+            $conn->close();
+        }
+    }
+
+    public function update2($sql, $type=null, ...$params) {
+        try {
+            $conn = $this->getConnection();
+            $conn->autocommit(false);
+            $stm = $conn->prepare($sql);
+            $stm->bind_param($type, ...$params);
+            $stm->execute();
+            $conn->commit();
+            $affectedRow = $stm->affected_rows;
+            return $affectedRow;
         } catch (Exception $e) {
             $conn->rollback();
             return false;

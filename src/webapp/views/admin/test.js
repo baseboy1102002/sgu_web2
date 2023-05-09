@@ -14,6 +14,8 @@ let product_pageable = {
     keyword: null
 }
 
+let permission = {}
+
 function loadTab(tab_id) {
     switch (tab_id) {
         case 'category':
@@ -48,7 +50,14 @@ function loadTab(tab_id) {
             
             break;
         case 'attribute':
-            
+            $.ajax({
+                type: "GET",
+                url: "../../../main/controller/api/attributeAPI.php",
+                dataType: "json",
+                success: function (response) {
+                    loadAttributes(response)
+                }
+            });
             break;
         case 'variant':
             product_pageable.page=1
@@ -63,11 +72,19 @@ function loadTab(tab_id) {
                     loadProductVariants(response.products)
                     loadProductVariantsPage(response.count)
                     load_Cbb_Sku_Attribute()
+                    loadVariantComboboxCategory()
                 }
             });
             break;
         case 'permission':
-            
+            $.ajax({
+                type: "GET",
+                url: "../../../main/controller/api/permissionAPI.php",
+                dataType: "json",
+                success: function (response) {
+                    loadPermission(response)
+                }
+            });
             break;
         default:
             break;
@@ -78,28 +95,111 @@ function loadTab(tab_id) {
 // ---------------- SIDEBAR ------------------- //
 // =========================================== //
 
-$(".sidebar_menu-items").each(function (index, element) {
-    $(element).click(function (e) { 
-        const id = element.classList[1]
-        $(".menu_active").removeClass("active")
-        $(".menu_active").removeClass("menu_active")
-        $(".tabs").each(function (i, e) {
-            $(e).addClass("tab_hide")
-            if ($(e).hasClass(id)) {
-                loadTab(id)
-                $(e).removeClass("tab_hide")
-            }
-        });
-        $(element).addClass("menu_active")
-        $(element).addClass("active")
-    });
-});
+// $(".sidebar_menu-items").each(function (index, element) {
+//     $(element).click(function (e) { 
+//         const id = element.classList[1]
+//         $(".menu_active").removeClass("active")
+//         $(".menu_active").removeClass("menu_active")
+//         $(".tabs").each(function (i, e) {
+//             $(e).addClass("tab_hide")
+//             if ($(e).hasClass(id)) {
+//                 loadTab(id)
+//                 $(e).removeClass("tab_hide")
+//             }
+//         });
+//         $(element).addClass("menu_active")
+//         $(element).addClass("active")
+//     });
+// });
 
 $(document).ready(function () {
-    loadTab('product')
+    const account_id_nhom_quyen = $('#account_id_nhom_quyen').val()
+    
+    $.ajax({
+        type: "GET",
+        url: `../../../main/controller/api/permissionAPI.php?id=${account_id_nhom_quyen}`,
+        dataType: "json",
+        async: 'false',
+        success: function (response) {
+            response.forEach(item=>{
+                permission[item.id_chuc_nang] = {}
+                permission[item.id_chuc_nang]['is_read'] = item.is_read
+                permission[item.id_chuc_nang]['is_insert'] = item.is_insert
+                permission[item.id_chuc_nang]['is_update'] = item.is_update
+                permission[item.id_chuc_nang]['is_delete'] = item.is_delete
+            })
+            $.ajax({
+                type: "GET",
+                url: '../../../main/controller/api/featureAPI.php',
+                dataType: "json",
+                success: function (response) {
+                    loadSideBar(response)
+                    authorizeUser(permission)
+                }
+            });
+        }
+    });
+
+    
+
+    loadTab('report')
     searchProduct()
+    searchVariant()
+    loadFeatureList()
+    logout()
 });
 
+function authorizeUser(permission) {
+    $(".sidebar_menu-items").each(function (index, element) {
+        const id_chuc_nang = $(this).data('id-chuc-nang');
+        let is_read
+        if(id_chuc_nang==0) is_read = 1
+        else is_read = permission[id_chuc_nang]['is_read']
+        if(is_read==0) {
+            is_read = 0
+            $(element).addClass('background-grey')
+        }
+        $(element).click(function (e) { 
+            if(is_read==1) {
+                const id = element.classList[1]
+                $(".menu_active").removeClass("active")
+                $(".menu_active").removeClass("menu_active")
+                $(".tabs").each(function (i, e) {
+                    $(e).addClass("tab_hide")
+                    if ($(e).hasClass(id)) {
+                        loadTab(id)
+                        $(e).removeClass("tab_hide")
+                    }
+                });
+                $(element).addClass("menu_active")
+                $(element).addClass("active")
+            } else {
+                toast({
+                    title: "Hạn chế",
+                    message: "Bạn không có quyền hạn để truy cập",
+                    type: "warning",
+                    duration: 2000
+                });
+            }
+        });
+    });
+}
+
+function loadSideBar(response) {
+    let str=`
+    <li class="sidebar_menu-items report list-group-item menu_active active" data-id-chuc-nang="0">
+        <i class="fa-solid fa-chart-pie"></i> Thống kê
+    </li>
+    `
+    response.forEach(item=>{
+        str += `
+        <li class="sidebar_menu-items ${item.code} list-group-item" data-id-chuc-nang=${item.id}>
+            <i class="${item.icon}"></i> ${item.ten_chuc_nang}
+        </li>
+        `
+    })
+    $('.sidebar_menu-list').html(str);
+}
 
 
 function loadPage(count) {
@@ -191,6 +291,7 @@ function loadProducts(products) {
     products.forEach((item) => {
         str += `
             <tr data-id="${item.id}">
+                <td>${item.id}</td>
                 <td>
                     <div class="product_bgImg" style="background-image: url(${imgFolder}${item.img_path})"></div>
                     <input type="hidden" id="${item.id}" value="${item.img_path}">
@@ -273,10 +374,21 @@ function loadProductComboboxCategory(selector) {
 }
 
 $("#product_add_btn").click(function (e) { 
-    clearProductForm()
-    $('#product_modal').attr('data-action', 'add')
-    $('.modal-title-product').text('Thêm sản phẩm')
-    $("#product_id").text('auto');
+    const active_feature = $('.sidebar_menu-items.active').data('id-chuc-nang')
+    if(permission[active_feature]['is_insert']==1) {
+        clearProductForm()
+        $('#product_modal').attr('data-action', 'add')
+        $('.modal-title-product').text('Thêm sản phẩm')
+        $("#product_id").text('auto');
+        $('#product_modal').modal('show')
+    } else {
+        toast({
+            title: "Hạn chế",
+            message: "Bạn không có quyền hạn để sử dụng hành động này",
+            type: "warning",
+            duration: 2000
+        });
+    }
 });
 
 function clearProductForm() {
@@ -292,6 +404,17 @@ function clearProductForm() {
 
 $("#product_form").submit(function (e) {
     e.preventDefault()
+    const active_feature = $('.sidebar_menu-items.active').data('id-chuc-nang');
+    if(permission[active_feature]['is_update']==0){
+        toast({
+            title: "Hạn chế",
+            message: "Bạn không có quyền hạn để sử dụng hành động này",
+            type: "warning",
+            duration: 2000
+        });
+        return false
+    } 
+        
     if (validateProductForm()) {
         let formData = new FormData();
         $.each($(this).serializeArray(), function (i, e) { 
@@ -310,7 +433,7 @@ $("#product_form").submit(function (e) {
             case 'update':
                 product_id = $('#product_id').text()
                 url = `../../../main/controller/api/productAPI.php?id=${product_id}`
-                message = "Cập nhật sản phẩm thành công"
+                message = "Đã cập nhật thay đổi"
                 break
             default:
                 break
@@ -336,7 +459,7 @@ $("#product_form").submit(function (e) {
                 toast({
                     title: "Thất bại!",
                     message: "Đã có lỗi xảy ra ("+ exception +")",
-                    type: "erorr",
+                    type: "error",
                     duration: 4000
                 });
             }
@@ -368,6 +491,16 @@ function validateProductForm() {
 
 $('#product_confirm_delete_btn').click(function (e) { 
     e.preventDefault();
+    const active_feature = $('.sidebar_menu-items.active').data('id-chuc-nang');
+    if(permission[active_feature]['is_delete']==0) {
+        toast({
+            title: "Hạn chế",
+            message: "Bạn không có quyền hạn để sử dụng hành động này",
+            type: "warning",
+            duration: 2000
+        });
+        return false
+    }
     const product_id = $(this).closest('form').find('#product_delete_id').val()
     $.ajax({
         type: "DELETE",
@@ -395,7 +528,57 @@ $('#product_confirm_delete_btn').click(function (e) {
 });
 
 
-// PRODUCT VARIANTS //
+// VARIANT TAB //
+
+function loadVariantComboboxCategory() {
+    let str = "<option value='0'>Tất cả</option>"
+    $.ajax({
+        type: "GET",
+        url: "../../../main/controller/api/categoryAPI.php",
+        dataType: "json",
+        success: function (response) {
+            response.forEach((item) => {
+                str += `
+                    <option value="${item.id}">${item.ten_danh_muc}</option>
+                `
+            })
+            $('.variant_filter_category').html(str)
+        }
+    });
+}
+
+function searchVariant() {
+    $("#variant_search_btn").click(function (e) { 
+        e.preventDefault()
+        const searchValue = $("#variant_search_input").val()
+        const categoryId = $('.variant_filter_category').val() == 0? null:$('.variant_filter_category').val()
+        if(searchValue.trim()) {
+            product_pageable.page = 1
+            product_pageable.keyword = searchValue
+            product_pageable.categoryId = categoryId
+        } else {
+            product_pageable.page = 1
+            product_pageable.keyword = null
+            product_pageable.categoryId = categoryId
+        }
+        $("#variant_search_input").val('')
+        $.ajax({
+            type: "GET",
+            url: "../../../main/controller/api/productVariantsAPI.php",
+            data: product_pageable,
+            dataType: "json",
+            success: function (response) {
+                loadProductVariants(response.products)
+                loadProductVariantsPage(response.count)
+            },
+            error: function(jqXHR, exception) {
+                loadProductVariants([])
+                loadProductVariantsPage(0)
+            }
+        });
+    });
+}
+
 function loadProductVariants(productVariants) {
     if($.isEmptyObject(productVariants)) {
         $(".variant_list").html("<h2>Không tìm thấy sản phẩm!</h2>")
@@ -411,9 +594,6 @@ function loadProductVariants(productVariants) {
                 <td>${item.don_gia}</td>
                 <td>${item.so_luong}</td>
                 <td>${item.id_sp}</td>
-                <td>
-                    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#variantDetail_modal">Xem chi tiết</button>
-                </td>
                 <td>
                     <button type="button" class="btn btn-danger variant_delete_btn">
                         <i class="fa-solid fa-trash"></i>
@@ -536,7 +716,6 @@ function loadProductVariantDetail(variant) {
         const ten_thuoc_tinh = arr_thuoc_tinh[1]
         const id_gia_tri = arr_gia_tri[0]
         const gia_tri = arr_gia_tri[1]
-        // <td class="variantAttribute_value" data-id-gt="${id_gia_tri}">${gia_tri}</td>
         str += `
             <tr class="variantAttribute_item">
                 <td class="variantAttribute_attribute" data-id-tt="${id_thuoc_tinh}">${ten_thuoc_tinh}</td>
@@ -634,15 +813,21 @@ function load_Cbb_Sku_AttributeValue(attributeValues) {
 }
 
 function load_Cbb_Sku_Attribute_ValueDetail(attributeValues, id_thuoc_tinh, id_gia_tri) {
-
     let str = ''
+    let flag = false
     attributeValues.forEach(item=> {
+        if(id_gia_tri == item.id) {
+            flag = true
+        }
         str += `
             <option value="${item.id}">${item.gia_tri}</option>
         `
     })
     $(`[data-id-tt="${id_thuoc_tinh}"]`).closest('tr').find('select').html(str)
-    $(`[data-id-tt="${id_thuoc_tinh}"]`).closest('tr').find('select').val(id_gia_tri)
+    if(flag)
+        $(`[data-id-tt="${id_thuoc_tinh}"]`).closest('tr').find('select').val(id_gia_tri)
+    else
+        $(`[data-id-tt="${id_thuoc_tinh}"]`).closest('tr').find('select').val(attributeValues[0].id)
 }
 
 function getAll_Sku_Attribute_Value_ById(id_thuoc_tinh, id_gia_tri=null, loadOnDetal=false) {
@@ -673,16 +858,37 @@ function clearProductVariantForm() {
 }
 
 $('#variant_add_btn').click(function (e) { 
-    e.preventDefault();
-    clearProductVariantForm()
-    $('.modal-title-variant').text('Thêm biến thể')
-    $('#variant_id').val('auto')
-    $('#variant_modal').attr('data-action', 'add');
+    const active_feature = $('.sidebar_menu-items.active').data('id-chuc-nang');
+    if(permission[active_feature]['is_insert']==1) {
+        clearProductVariantForm()
+        $('.modal-title-variant').text('Thêm biến thể')
+        $('#variant_id').val('auto')
+        $('#variant_modal').attr('data-action', 'add');
+        $('#variant_modal').modal('show')
+    } else {
+        toast({
+            title: "Hạn chế",
+            message: "Bạn không có quyền hạn để sử dụng hành động này",
+            type: "warning",
+            duration: 2000
+        });
+    }
 });
 
 $('#variant_form').submit(function (e) { 
     e.preventDefault();
-    if (validateVariantForm()) {
+    const active_feature = $('.sidebar_menu-items.active').data('id-chuc-nang');
+    if(permission[active_feature]['is_update']==0) {
+        toast({
+            title: "Hạn chế",
+            message: "Bạn không có quyền hạn để sử dụng hành động này",
+            type: "warning",
+            duration: 2000
+        });
+        return false
+    }
+    const id_sp = $('#variant_id_sp').val()
+    if (validateVariantForm()&&isExistProductId(id_sp)) {
         let data = {}
         $.each($(this).serializeArray(), function (i, el) { 
             data[""+el.name+""] = el.value
@@ -694,7 +900,6 @@ $('#variant_form').submit(function (e) {
             data['id_thuoc_tinh'].push($(this).find('[data-id-tt]').data('id-tt'))
             data['id_gia_tri'].push($(this).find('select').val())
         });
-
         let method, sku_id, url, message
         switch ($('#variant_modal').attr('data-action')) {
             case 'add':
@@ -706,7 +911,7 @@ $('#variant_form').submit(function (e) {
                 method = 'PUT'
                 sku_id = $('#variant_id').val()
                 url = `../../../main/controller/api/productVariantsAPI.php?id=${sku_id}`
-                message = "Cập nhật biến thể sản phẩm thành công"
+                message = "Đã cập nhật thay đổi"
                 break
             default:
                 break
@@ -716,7 +921,7 @@ $('#variant_form').submit(function (e) {
             url: url,
             data: JSON.stringify(data),
             contentType: 'application/json',
-            dataType: "json",
+            dataType: 'json',
             success: function (response) {
                 loadTab('variant')
                 $('#variant_modal').modal('hide')
@@ -731,13 +936,30 @@ $('#variant_form').submit(function (e) {
                 toast({
                     title: "Thất bại!",
                     message: "Đã có lỗi xảy ra ("+ exception +")",
-                    type: "erorr",
+                    type: "error",
                     duration: 4000
                 });
             }
         });
     } else return false
 });
+
+function isExistProductId(product_id) {
+    return $.ajax({
+        type: "GET",
+        url: `../../../main/controller/api/productAPI.php?id=${product_id}`,
+        async: false,
+        dataType: "json",
+        success: function (response) {
+            if(response.in_stock!=0)
+                $($("#variant_id_sp").closest('.form-group').children(".form-messege")).text('')
+            else
+                $($("#variant_id_sp").closest('.form-group').children(".form-messege")).text('Mã sản phẩm không tồn tại')
+        }, error: function(jqXHR, exception) {
+            $($("#variant_id_sp").closest('.form-group').children(".form-messege")).text('Mã sản phẩm không tồn tại')
+        }
+    }).responseText;
+}
 
 function validateVariantForm() {
     const regex = /[!@#$%^&*,.?":{}|<>]/gm
@@ -765,6 +987,16 @@ function validateVariantForm() {
 
 $('#variant_delete_confirm_btn').click(function (e) { 
     e.preventDefault();
+    const active_feature = $('.sidebar_menu-items.active').data('id-chuc-nang');
+    if(permission[active_feature]['is_delete']==0) {
+        toast({
+            title: "Hạn chế",
+            message: "Bạn không có quyền hạn để sử dụng hành động này",
+            type: "warning",
+            duration: 2000
+        });
+        return false
+    }
     const variant_id = $(this).closest('form').find('#variant_delete_id').val()
     $.ajax({
         type: "DELETE",
@@ -791,31 +1023,575 @@ $('#variant_delete_confirm_btn').click(function (e) {
     });
 });
 
+// ATTRIBUTE TAB  //
 
-// $('#product_confirm_delete_btn').click(function (e) { 
-//     e.preventDefault();
-//     const product_id = $(this).closest('form').find('#product_delete_id').val()
-//     $.ajax({
-//         type: "DELETE",
-//         url: `../../../main/controller/api/productAPI.php?id=${product_id}`,
-//         dataType: "json",
-//         success: function (response) {
-//             loadTab('product')
-//             $('#product_delete_modal').modal('hide')
-//             toast({
-//                 title: "Thành công!",
-//                 message: "Đã xóa sản phẩm",
-//                 type: "success",
-//                 duration: 4000
-//             });
-//         }, error: function(jqXHR, exception) {
-//             $('#product_delete_modal').modal('hide')
-//             toast({
-//                 title: "Thất bại!",
-//                 message: "Đã có lỗi xảy ra ("+ exception +")",
-//                 type: "error",
-//                 duration: 4000
-//             });
-//         }
-//     });
-// });
+function loadAttributes(attributes) {
+    if($.isEmptyObject(attributes)) {
+        $(".attribute_list").html("<h2>Không có dữ liệu để hiển thị!</h2>");    
+        return
+    }
+    $(".attribute_list").html('')
+    let str = ''
+    attributes.forEach((item)=>{
+        str += `
+            <tr data-id="${item.id}">
+                <td>${item.id}</td>
+                <td>${item.ten_thuoc_tinh}</td>
+                <td class = "text-center">
+                    <button type="button" class="btn btn-danger attribute_delete_btn">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                    <button type="button" class="btn btn-success attribute_update_btn">
+                        Xem chi tiết/Sửa
+                    </button>
+                </td>
+            </tr>
+        `
+    })
+    $(".attribute_list").html(str)
+    $(".attribute_update_btn").each(function (index, element) {
+        $(element).click(function (e) { 
+            e.preventDefault()
+            const attribute_id = $(element).closest('tr').data('id')
+            $('.modal-title-attribute').text('Sửa thuộc tính')
+            $('#attribute_messege').text('')
+            loadAttributeDetail(attribute_id)
+            $('#attribute_modal').attr('data-action', 'update');
+            $('#attribute_modal').modal('show')
+        });
+        
+    });
+
+    $('.attribute_delete_btn').each(function (index, element) {
+        $(element).click(function (e) { 
+            e.preventDefault();
+            const attribute_id = $(element).closest('tr').data('id')
+            const attribute_name = $(element).closest('tr').children(':nth-child(2)').text()
+            $('#attribute_delete_id').val(attribute_id)
+            $('#attribute_delete_name').val(attribute_name)
+            $('.modal-title-attribute').text('Xóa thuộc tính')
+            $('#attribute_delete_modal').modal('show')
+        });
+        
+    });
+}
+
+function loadAttributeDetail(attribute_id) {
+    $('#attribute_id').val(attribute_id)
+    $.ajax({
+        type: "GET",
+        url: "../../../main/controller/api/attributeAPI.php",
+        data: `id=${attribute_id}`,
+        dataType: "json",
+        success: function (response) {
+            $("#attribute_name").val(response.ten_thuoc_tinh)
+        }
+    });
+
+    $.get("../../../main/controller/api/attributeValueAPI.php", `id_thuoc_tinh=${attribute_id}`,
+        function (data, textStatus, jqXHR) {
+            let str = ''
+            data.forEach((item)=>{
+                str += `
+                    <tr class="attributeValue_item">
+                        <td class="attribute_value" data-id-gt="${item.id}"><input class="form-input form-control" type="text" value="${item.gia_tri}" required></td>
+                        <td class="attribute_delete text-center"><i class="fa-solid fa-trash attributeValue_del_btn"></i></td>
+                    </tr>
+                `
+            })
+            $('.attributeValue_list').html(str);
+            $('.attributeValue_del_btn').each(function (index, element) {
+                $(element).click(function (e) { 
+                    e.preventDefault()
+                    $(this).closest('.attributeValue_item').remove()
+                });
+            });
+        },
+    "json"
+    );
+}
+
+$('#attribute_add_btn').click(function (e) {
+    const active_feature = $('.sidebar_menu-items.active').data('id-chuc-nang');
+    if(permission[active_feature]['is_insert']==1) {
+        clearAttributeForm()
+        $('#attribute_id').val('auto')
+        $('#attribute_modal').attr('data-action', 'add')
+        $('.modal-title-attribute').text('Thêm thuộc tính');
+        $('#attribute_modal').modal('show')
+    } else {
+        toast({
+            title: "Hạn chế",
+            message: "Bạn không có quyền hạn để sử dụng hành động này",
+            type: "warning",
+            duration: 2000
+        });
+    }
+});
+
+function clearAttributeForm() {
+    $('#attribute_name').val('')
+    $('.attributeValue_list').html('')
+    $('#attribute_form .form-messege').text('')
+    $('#attribute_messege').text('')
+}
+
+$('#add_attribute_value').click(function (e) { 
+    e.preventDefault();
+    const value = $('#attribute_value').val().trim().toLowerCase()
+    if(isExistAttribute_Value(value)) {
+        $('#attribute_messege').text('Giá trị đã được thiết lập');
+    } else {
+        let str = `
+            <tr class="attributeValue_item">
+                <td class="attribute_value" data-id-gt=""><input class="form-input form-control" type="text" value="${value}" required></td>
+                <td class="attribute_delete text-center"><i class="fa-solid fa-trash attributeValue_del_btn"></i></td>
+            </tr>
+        `
+        $('.attributeValue_list').append(str)
+        $('.attributeValue_del_btn').each(function (index, element) {
+            $(element).unbind().click(function (e) { 
+                e.preventDefault()
+                $(this).closest('.attributeValue_item').remove()
+            });
+        });
+    }
+});
+
+function isExistAttribute_Value(value) {
+    let flag = false
+    $('.attribute_value input').each(function (index, element) {
+        if(value === $(element).val().trim().toLowerCase())
+            flag = true
+    });
+    return flag
+}
+
+$('#attribute_form').submit(function (e) { 
+    e.preventDefault();
+    const active_feature = $('.sidebar_menu-items.active').data('id-chuc-nang');
+    if(permission[active_feature]['is_update']==0) {
+        toast({
+            title: "Hạn chế",
+            message: "Bạn không có quyền hạn để sử dụng hành động này",
+            type: "warning",
+            duration: 2000
+        });
+        return false
+    }
+    if(validateAttributeForm()) {
+        let data = {}
+        $.each($(this).serializeArray(), function (i, el) { 
+            data[""+el.name+""] = el.value
+        });
+        data['id_gia_tri'] = []
+        data['gia_tri'] = []
+        $('.attribute_value').each(function (index, element) {
+            const attribute_value_id = $(element).data('id-gt')
+            data['id_gia_tri'].push(attribute_value_id!=''?attribute_value_id:'DEFAULT')
+            data['gia_tri'].push($(element).find('input').val())
+        });
+        switch ($('#attribute_modal').attr('data-action')) {
+            case 'add':
+                $.ajax({
+                    type: "POST",
+                    url: "../../../main/controller/api/attributeAPI.php",
+                    data: JSON.stringify(data),
+                    dataType: "json",
+                    success: function (response) {
+                        const id_thuoc_tinh = JSON.parse(JSON.stringify(response))
+                        data['id_thuoc_tinh'] = id_thuoc_tinh
+                        $.ajax({
+                            type: "POST",
+                            url: "../../../main/controller/api/attributeValueAPI.php",
+                            data: JSON.stringify(data),
+                            dataType: "json",
+                            success: function (response) {
+                                loadTab('attribute')
+                                $('#attribute_modal').modal('hide')
+                                toast({
+                                    title: "Thành công!",
+                                    message: "Đã tạo thuộc tính mới",
+                                    type: "success",
+                                    duration: 4000
+                                });
+                            }
+                        });
+                    }, error: function(jqXHR, exception) {
+                        $('#attribute_modal').modal('hide')
+                        toast({
+                            title: "Thất bại!",
+                            message: "Đã có lỗi xảy ra ("+ exception +")",
+                            type: "error",
+                            duration: 4000
+                        });
+                    }
+                });
+                break;
+            case 'update':
+                const id_thuoc_tinh = $('#attribute_id').val();
+                $.ajax({
+                    type: "PUT",
+                    url: `../../../main/controller/api/attributeAPI.php?id=${id_thuoc_tinh}`,
+                    data: JSON.stringify(data),
+                    dataType: "json",
+                    success: function (response) { 
+                        data['id_thuoc_tinh'] = id_thuoc_tinh
+                        $.ajax({
+                            type: "PUT",
+                            url: '../../../main/controller/api/attributeValueAPI.php',
+                            data: JSON.stringify(data),
+                            dataType: "json",
+                            success: function (response) {
+                                loadTab('attribute')
+                                $('#attribute_modal').modal('hide')
+                                toast({
+                                    title: "Thành công!",
+                                    message: "Đã cập nhật thay đổi",
+                                    type: "success",
+                                    duration: 4000
+                                });
+                            }
+                        });
+                    }, error: function(jqXHR, exception) {
+                        $('#attribute_modal').modal('hide')
+                        toast({
+                            title: "Thất bại!",
+                            message: "Đã có lỗi xảy ra ("+ exception +")",
+                            type: "error",
+                            duration: 4000
+                        });
+                    }
+                });
+                break;
+            default:
+                break;
+        }
+    } else return false
+});
+
+function validateAttributeForm() {
+    const regex = /[!@#$%^&*,.?":{}|<>]/gm
+    let flag = true
+    if (regex.test($("#attribute_name").val())) {
+        $($("#attribute_name").closest('.form-group').children(".form-messege")).text('Chứa ký tự đặc biệt')
+        flag = false
+    } else {
+        $($("#attribute_name").closest('.form-group').children(".form-messege")).text('')
+    }
+    if ($('.attributeValue_list .attributeValue_item').length == 0) {
+        $('#attribute_messege').text('Phải có ít nhất một thuộc tính cho biến thể')
+        flag = false
+    } else {
+        $('#attribute_messege').text('')
+    }
+    return flag
+}
+
+$('#attribute_delete_confirm_btn').click(function (e) { 
+    e.preventDefault();
+    const active_feature = $('.sidebar_menu-items.active').data('id-chuc-nang');
+    if(permission[active_feature]['is_delete']==0) {
+        toast({
+            title: "Hạn chế",
+            message: "Bạn không có quyền hạn để sử dụng hành động này",
+            type: "warning",
+            duration: 2000
+        });
+        return false
+    }
+    const attr_id = $(this).closest('form').find('#attribute_delete_id').val()
+    $.ajax({
+        type: "DELETE",
+        url: `../../../main/controller/api/attributeAPI.php?id=${attr_id}`,
+        dataType: "json",
+        success: function (response) {
+            loadTab('attribute')
+            $('#attribute_delete_modal').modal('hide')
+            toast({
+                title: "Thành công!",
+                message: "Đã xóa thuộc tính",
+                type: "success",
+                duration: 4000
+            });
+        }, error: function(jqXHR, exception) {
+            $('#attribute_delete_modal').modal('hide')
+            toast({
+                title: "Thất bại!",
+                message: "Đã có lỗi xảy ra ("+ exception +")",
+                type: "error",
+                duration: 4000
+            });
+        }
+    });
+});
+
+// FEATURE TAB //
+function loadFeatureList() {
+    $.ajax({
+        type: "GET",
+        url: '../../../main/controller/api/featureAPI.php',
+        dataType: "json",
+        success: function (response) {
+            response.forEach(item=> {
+                str = `
+                <tr data-id="${item.id}">
+                    <td>${item.ten_chuc_nang}</td>
+                    <td><label class="switch">
+                        <input type="checkbox" class="permisson-checkbox" data-type="is_insert">
+                        <span class="slider round"></span>
+                    </label></td>
+                    <td><label class="switch">
+                        <input type="checkbox" class="permisson-checkbox" data-type="is_update">
+                        <span class="slider round"></span>
+                    </label></td>
+                    <td><label class="switch">
+                        <input type="checkbox" class="permisson-checkbox" data-type="is_delete">
+                        <span class="slider round"></span>
+                        </label></td>
+                    <td><label class="switch">
+                        <input type="checkbox" class="permisson-checkbox" data-type="is_read">
+                        <span class="slider round"></span>
+                    </label></td>
+                </tr>
+                `
+                $('#permission_feature_detail').append(str);
+            })
+        }
+    });
+}
+
+function loadPermission(permissions) {
+    $(".permission_list").html("")
+    permissions.forEach(item=>{
+        let str = `
+        <tr class="permission_list_content" data-id="${item.id}">
+            <td class="permission_list_item">${item.id}</td>
+            <td class="permission_list_item">${item.ten_nhom_quyen}</td>
+            <td class="permission_list_item">
+                <button type="button" class="btn btn-danger permission_delete_btn">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+                <button type="button" class="btn btn-success permission_update_btn">
+                   Xem chi tiết/Sửa
+                </button>
+            </td>
+        </tr>
+        `
+        $('.permission_list').append(str);
+        
+    })
+    $('.permission_list [data-id]').each(function(i, e) {
+        if([1,2].includes($(this).data('id')))
+            $(this).find('.permission_delete_btn').prop('disabled', true)
+    })
+
+    $(".permission_update_btn").each(function (index, element) {
+        $(element).click(function (e) { 
+            e.preventDefault()
+            const permission_id = $(element).closest('tr').data('id')
+            const permission_name = $(element).closest('tr').children(':nth-child(2)').text()
+            $('.modal-title-permission').text('Sửa nhóm quyền')
+            loadPermissionDetail(permission_id, permission_name)
+            $('#permission_modal').attr('data-action', 'update');
+            $('#permission_modal').modal('show')
+        });
+        
+    });
+
+    $('.permission_delete_btn').each(function (index, element) {
+        $(element).click(function (e) { 
+            e.preventDefault();
+            const permission_id = $(element).closest('tr').data('id')
+            const permission_name = $(element).closest('tr').children(':nth-child(2)').text()
+            $('#permission_delete_id').val(permission_id)
+            $('#permission_delete_name').val(permission_name)
+            $('#permission_delete_modal').modal('show')
+        });
+        
+    });
+}
+
+function loadPermissionDetail(permission_id, permission_name) {
+    $('#permission_id').val(permission_id);
+    $('#permission_name').val(permission_name);
+    if([1,2].includes(permission_id)) {
+        $('#permission_confirm_btn').prop('disabled', true)
+    } else $('#permission_confirm_btn').prop('disabled', false)
+    $.ajax({
+        type: "GET",
+        url: '../../../main/controller/api/permissionAPI.php',
+        data: `id=${permission_id}`,
+        dataType: "json",
+        success: function (response) {
+            response.forEach(item=> {
+                $(`#permission_feature_detail [data-id="${item.id_chuc_nang}"]`).find('input').each(function (index, element) {
+                    $(element).prop('checked', item[`${$(element).data('type')}`]==1?true:false);
+                });
+            })
+        }, error: function(jqXHR, exception) {
+            clearFeatureCheckBoxs()
+        }
+    });
+}
+
+function clearFeatureCheckBoxs() {
+    $(`#permission_feature_detail [data-id]`).find('input').each(function (index, element) {
+        $(element).prop('checked', false);
+    })
+}
+
+function clearPermissionForm() {
+    clearFeatureCheckBoxs()
+    $('#permission_name').val('');
+    $('.permisson-message').text('');
+    $('#permission_confirm_btn').prop('disabled', false)
+}
+
+$('#permission_add_btn').click(function (e) { 
+    const active_feature = $('.sidebar_menu-items.active').data('id-chuc-nang');
+    if(permission[active_feature]['is_insert']==1) {
+        clearPermissionForm()
+        $('.modal-title-permission').text('Thêm nhóm quyền')
+        $('#permission_id').val('auto')
+        $('#permission_modal').attr('data-action', 'add')
+        $('#permission_modal').modal('show')
+    } else {
+        toast({
+            title: "Hạn chế",
+            message: "Bạn không có quyền hạn để sử dụng hành động này",
+            type: "warning",
+            duration: 2000
+        });
+    }
+});
+
+$('#permission_form').submit(function (e) { 
+    e.preventDefault();
+    const active_feature = $('.sidebar_menu-items.active').data('id-chuc-nang');
+    if(permission[active_feature]['is_update']==0) {
+        toast({
+            title: "Hạn chế",
+            message: "Bạn không có quyền hạn để sử dụng hành động này",
+            type: "warning",
+            duration: 2000
+        });
+        return false
+    }
+    if(validatePermissionForm()) {
+        let data = {}
+        $.each($(this).serializeArray(), function (i, el) { 
+            data[""+el.name+""] = el.value
+        })
+        data['id_chuc_nang'] = []
+        data['is_read'] = []
+        data['is_insert'] = []
+        data['is_update'] = []
+        data['is_delete'] = []
+        $('#permission_feature_detail tr').each(function (index, element) {
+            data['id_chuc_nang'].push($(element).data('id'))
+            $(element).find('input').each(function (i, e) {
+                data[`${$(e).data('type')}`].push($(e).is(':checked') ? 1:0)
+            })
+        });
+        let method, permission_id, url, message
+        switch ($('#permission_modal').attr('data-action')) {
+            case 'add':
+                method = 'POST'
+                url = '../../../main/controller/api/permissionAPI.php'
+                message = 'Đã thêm nhóm quyền mới'
+                break;
+            case 'update':
+                method = 'PUT'
+                permission_id = $('#permission_id').val()
+                url = `../../../main/controller/api/permissionAPI.php?id=${permission_id}`
+                message = 'Đã cập nhật thay đổi'
+                break;
+            default:
+                break;
+        }
+        console.log(data)
+        $.ajax({
+            type: method,
+            url: url,
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function (response) {
+                loadTab('permission')
+                $('#permission_modal').modal('hide')
+                toast({
+                    title: "Thành công!",
+                    message: message,
+                    type: "success",
+                    duration: 4000
+                });
+            }, error: function(jqXHR, exception) {
+                $('#permission_modal').modal('hide')
+                toast({
+                    title: "Thất bại!",
+                    message: "Đã có lỗi xảy ra ("+ exception +")",
+                    type: "error",
+                    duration: 4000
+                });
+            }
+        });
+    }
+});
+
+function validatePermissionForm() {
+    let flag = true
+    const regex = /[!@#$%^&*,.?":{}|<>]/gm
+    if(regex.test($('#permission_name').val())) {
+        flag = false
+        $('.permisson-message').text('Chứa ký tự không hợp lệ');
+    } else {
+        $('.permisson-message').text('');
+    }
+    return flag
+}
+
+$('#permission_delete_confirm_btn').click(function (e) { 
+    e.preventDefault();
+    const active_feature = $('.sidebar_menu-items.active').data('id-chuc-nang');
+    if(permission[active_feature]['is_delete']==0) {
+        toast({
+            title: "Hạn chế",
+            message: "Bạn không có quyền hạn để sử dụng hành động này",
+            type: "warning",
+            duration: 2000
+        });
+        return false
+    }
+    const permission_id = $(this).closest('form').find('#permission_delete_id').val()
+    $.ajax({
+        type: "DELETE",
+        url: `../../../main/controller/api/permissionAPI.php?id=${permission_id}`,
+        success: function (response) {
+            loadTab('permission')
+            $('#permission_delete_modal').modal('hide')
+            toast({
+                title: "Thành công!",
+                message: "Đã xóa nhóm quyền",
+                type: "success",
+                duration: 4000
+            });
+        }, error: function(jqXHR, exception) {
+            $('#permission_delete_modal').modal('hide')
+            toast({
+                title: "Thất bại!",
+                message: "Đã có lỗi xảy ra ("+ exception +")",
+                type: "error",
+                duration: 4000
+            });
+        }
+    });
+});
+
+function logout() {
+    $("#logOut").click(function (e) { 
+        e.preventDefault();
+        $.post( "../../../main/controller/api/accountAPI.php", function(data) {
+            window.location.replace('../user-page/index.php')
+        });
+    });
+}

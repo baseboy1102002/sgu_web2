@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th5 06, 2023 lúc 04:02 AM
+-- Thời gian đã tạo: Th5 09, 2023 lúc 11:17 PM
 -- Phiên bản máy phục vụ: 10.4.25-MariaDB
 -- Phiên bản PHP: 8.1.10
 
@@ -33,6 +33,25 @@ CREATE TABLE `chi_tiet_don_hang` (
   `so_luong` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Đang đổ dữ liệu cho bảng `chi_tiet_don_hang`
+--
+
+INSERT INTO `chi_tiet_don_hang` (`id_donhang`, `sku_id`, `so_luong`) VALUES
+(1, 10, 1),
+(4, 10, 1),
+(5, 9, 1),
+(6, 8, 1),
+(6, 9, 1),
+(7, 8, 1),
+(7, 9, 1),
+(8, 8, 1),
+(8, 9, 1),
+(9, 8, 1),
+(9, 9, 1),
+(10, 8, 1),
+(10, 9, 1);
+
 -- --------------------------------------------------------
 
 --
@@ -44,6 +63,16 @@ CREATE TABLE `chi_tiet_gio_hang` (
   `id_sku` int(5) NOT NULL,
   `quantity` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Đang đổ dữ liệu cho bảng `chi_tiet_gio_hang`
+--
+
+INSERT INTO `chi_tiet_gio_hang` (`id_gio_hang`, `id_sku`, `quantity`) VALUES
+(4, 2, 1),
+(4, 3, 1),
+(4, 8, 1),
+(4, 10, 1);
 
 -- --------------------------------------------------------
 
@@ -67,11 +96,38 @@ CREATE TABLE `chi_tiet_phieu_nhap` (
 CREATE TABLE `chi_tiet_quyen` (
   `id_nhom_quyen` int(11) NOT NULL,
   `id_chuc_nang` int(11) NOT NULL,
-  `insert` int(1) NOT NULL,
-  `update` int(1) NOT NULL,
-  `delete` int(1) NOT NULL,
-  `read` int(1) NOT NULL
+  `is_insert` int(1) NOT NULL,
+  `is_update` int(1) NOT NULL,
+  `is_delete` int(1) NOT NULL,
+  `is_read` int(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Đang đổ dữ liệu cho bảng `chi_tiet_quyen`
+--
+
+INSERT INTO `chi_tiet_quyen` (`id_nhom_quyen`, `id_chuc_nang`, `is_insert`, `is_update`, `is_delete`, `is_read`) VALUES
+(2, 1, 1, 1, 1, 1),
+(2, 2, 1, 1, 1, 1),
+(2, 3, 1, 1, 1, 1),
+(2, 4, 1, 1, 1, 1),
+(2, 5, 1, 1, 1, 1),
+(2, 6, 1, 1, 1, 1),
+(2, 7, 1, 1, 1, 1),
+(3, 1, 0, 0, 0, 0),
+(3, 2, 1, 1, 1, 1),
+(3, 3, 0, 0, 0, 1),
+(3, 4, 0, 0, 0, 0),
+(3, 5, 0, 0, 0, 1),
+(3, 6, 0, 0, 0, 0),
+(3, 7, 0, 0, 0, 0),
+(4, 1, 0, 0, 0, 0),
+(4, 2, 0, 0, 0, 0),
+(4, 3, 0, 0, 0, 0),
+(4, 4, 1, 1, 1, 1),
+(4, 5, 0, 0, 0, 1),
+(4, 6, 0, 0, 0, 0),
+(4, 7, 0, 0, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -81,8 +137,23 @@ CREATE TABLE `chi_tiet_quyen` (
 
 CREATE TABLE `chuc_nang` (
   `id` int(5) NOT NULL,
-  `ten_chuc_nang` varchar(30) NOT NULL
+  `ten_chuc_nang` varchar(30) NOT NULL,
+  `code` varchar(30) NOT NULL,
+  `icon` varchar(30) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Đang đổ dữ liệu cho bảng `chuc_nang`
+--
+
+INSERT INTO `chuc_nang` (`id`, `ten_chuc_nang`, `code`, `icon`) VALUES
+(1, 'Tài khoản', 'account', 'fa-solid fa-users'),
+(2, 'Sản phẩm', 'product', 'fa-solid fa-box-open'),
+(3, 'Danh mục', 'category', 'fa-solid fa-list'),
+(4, 'Thuộc tính', 'attribute', 'fas fa-tag'),
+(5, 'Biến thể', 'variant', 'fas fa-transgender-alt'),
+(6, 'Đơn hàng', 'ordernote', 'fa-solid fa-clipboard'),
+(7, 'Phân quyền', 'permission', 'fas fa-user-lock');
 
 -- --------------------------------------------------------
 
@@ -185,6 +256,20 @@ CREATE TABLE `don_hang` (
   `status` int(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Đang đổ dữ liệu cho bảng `don_hang`
+--
+
+INSERT INTO `don_hang` (`id`, `id_tk`, `created_date`, `ten_nguoi_nhan`, `dia_chi`, `sdt`, `tong_tien`, `status`) VALUES
+(1, 2, '2023-05-07 05:33:51', 'em iu', 'Tp.HCM', '0862863753', 54400000, 0),
+(4, 2, '2023-05-07 06:47:06', 'em iu', 'Tp.HCM', '0862863753', 26450000, 0),
+(5, 2, '2023-05-07 06:49:36', 'em iu', 'Tp.HCM', '0862863753', 27950000, 0),
+(6, 2, '2023-05-07 06:52:03', 'em iu', 'Tp.HCM', '0862863753', 48400000, 0),
+(7, 2, '2023-05-07 06:57:56', 'em iu', 'Tp.HCM', '0862863753', 48400000, 0),
+(8, 2, '2023-05-07 06:59:05', 'em iu', 'Tp.HCM', '0862863753', 48400000, 0),
+(9, 2, '2023-05-07 07:01:06', 'em iu', 'Tp.HCM', '0862863753', 48400000, 0),
+(10, 2, '2023-05-07 07:03:16', 'em iu', 'Tp.HCM', '0862863753', 48400000, 0);
+
 -- --------------------------------------------------------
 
 --
@@ -194,25 +279,26 @@ CREATE TABLE `don_hang` (
 CREATE TABLE `gia_tri_thuoc_tinh` (
   `id` int(5) NOT NULL,
   `gia_tri` varchar(20) NOT NULL,
-  `id_thuoc_tinh` int(5) NOT NULL
+  `id_thuoc_tinh` int(5) NOT NULL,
+  `is_delete` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Đang đổ dữ liệu cho bảng `gia_tri_thuoc_tinh`
 --
 
-INSERT INTO `gia_tri_thuoc_tinh` (`id`, `gia_tri`, `id_thuoc_tinh`) VALUES
-(1, 'Intel core i5', 1),
-(2, 'Amd ryzen 5', 1),
-(3, '8G', 2),
-(4, '4G', 2),
-(5, '256GB', 3),
-(6, '512GB', 3),
-(7, 'GTX1650', 4),
-(8, 'RTX3050', 4),
-(9, 'Amd Ryzen 7', 1),
-(10, 'RTX3060', 4),
-(11, '16G', 2);
+INSERT INTO `gia_tri_thuoc_tinh` (`id`, `gia_tri`, `id_thuoc_tinh`, `is_delete`) VALUES
+(1, 'Intel core i5', 1, 0),
+(2, 'Amd ryzen 5', 1, 0),
+(3, '8G', 2, 0),
+(4, '4G', 2, 0),
+(5, '256GB', 3, 0),
+(6, '512GB', 3, 0),
+(7, 'GTX1650', 4, 0),
+(8, 'RTX3050', 4, 0),
+(9, 'Amd Ryzen 7', 1, 0),
+(10, 'RTX3060', 4, 0),
+(11, '16G', 2, 0);
 
 -- --------------------------------------------------------
 
@@ -224,6 +310,14 @@ CREATE TABLE `gio_hang` (
   `id` int(5) NOT NULL,
   `id_tk` int(5) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Đang đổ dữ liệu cho bảng `gio_hang`
+--
+
+INSERT INTO `gio_hang` (`id`, `id_tk`) VALUES
+(4, 2),
+(5, 5);
 
 -- --------------------------------------------------------
 
@@ -242,7 +336,9 @@ CREATE TABLE `nhom_quyen` (
 
 INSERT INTO `nhom_quyen` (`id`, `ten_nhom_quyen`) VALUES
 (1, 'user'),
-(2, 'admin');
+(2, 'admin'),
+(3, 'admin quản lý sản phẩm'),
+(4, 'admin quản lý thuộc tính');
 
 -- --------------------------------------------------------
 
@@ -310,17 +406,17 @@ CREATE TABLE `skus` (
 --
 
 INSERT INTO `skus` (`id`, `sku_name`, `don_gia`, `so_luong`, `id_sp`, `in_stock`, `created_date`, `modified_date`) VALUES
-(1, 'AN-515 57-53F9 (i5/8G/256GB/RTX3050)', 20990000, 50, 1, 0, '2023-05-05 08:33:44', '2023-05-05 08:35:31'),
-(2, 'AN515 45 R6EV (r5/8G/512GB/GTX1650)', 18990000, 40, 1, 0, '2023-05-05 08:34:05', '2023-05-05 08:34:05'),
-(3, '8529 BLK (i5/4G/256GB)', 11490000, 60, 2, 0, '2023-05-05 08:34:08', '2023-05-05 08:34:08'),
-(4, '5174 BLK (i5/8G/512GB)', 19490000, 35, 2, 0, '2023-05-05 08:33:55', '2023-05-05 08:33:55'),
+(1, 'AN-515 57-53F9 (i5/8G/256GB/RTX3050)', 20990000, 50, 1, 1, '2023-05-05 08:33:44', '2023-05-05 08:35:31'),
+(2, 'AN515 45 R6EV (r5/8G/512GB/GTX1650)', 18990000, 40, 1, 1, '2023-05-05 08:34:05', '2023-05-05 08:34:05'),
+(3, '8529 BLK (i5/4G/256GB)', 11490000, 60, 2, 1, '2023-05-05 08:34:08', '2023-05-05 08:34:08'),
+(4, '5174 BLK (i5/8G/512GB)', 19490000, 35, 2, 1, '2023-05-05 08:33:55', '2023-05-05 08:33:55'),
 (5, 'BD5VN r5/8G/512GB/GTX1650', 15990000, 25, 3, 1, '2023-05-05 08:33:58', '2023-05-05 08:33:58'),
 (6, 'BD5VN r5/8G/512GB/RTX3050', 17990000, 12, 3, 1, '2023-05-05 08:34:03', '2023-05-05 08:34:03'),
-(7, 'VTE54 r5/8G/512G/GTX1650', 16990000, 30, 4, 1, '2023-05-05 08:34:24', '2023-05-05 08:34:24'),
-(8, 'VTE54 r5/16G/512G/RTX3050', 20450000, 22, 4, 1, '2023-05-05 08:34:27', '2023-05-05 08:34:27'),
-(9, 'OME012 r7/16G/512G/RTX3060', 27950000, 8, 5, 1, '2023-05-05 08:34:34', '2023-05-05 08:34:34'),
-(10, 'LVLEG i5/8G/512G/RTX3060', 26450000, 14, 6, 1, '2023-05-05 08:34:37', '2023-05-05 08:34:37'),
-(11, 'sku_test_name9', 15000000, 10, 9, 1, '2023-05-05 08:34:41', '2023-05-05 08:37:15');
+(7, 'VTE54 r5/8G/512G/GTX1650', 16990000, 28, 4, 1, '2023-05-05 08:34:24', '2023-05-05 08:34:24'),
+(8, 'VTE54 r5/16G/512G/RTX3050', 20450000, 15, 4, 1, '2023-05-05 08:34:27', '2023-05-05 08:34:27'),
+(9, 'OME012 r7/16G/512G/RTX3060', 27950000, 0, 5, 1, '2023-05-05 08:34:34', '2023-05-05 08:34:34'),
+(10, 'LVLEG i5/8G/512G/RTX3060', 26450000, 11, 6, 1, '2023-05-05 08:34:37', '2023-05-05 08:34:37'),
+(11, 'sku_test_name9', 15000000, 6, 9, 1, '2023-05-05 08:34:41', '2023-05-05 08:37:15');
 
 -- --------------------------------------------------------
 
@@ -354,18 +450,19 @@ INSERT INTO `tai_khoan` (`id`, `ten_tk`, `password`, `email`, `id_nhom_quyen`, `
 
 CREATE TABLE `thuoc_tinh` (
   `id` int(5) NOT NULL,
-  `ten_thuoc_tinh` varchar(20) NOT NULL
+  `ten_thuoc_tinh` varchar(20) NOT NULL,
+  `is_delete` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Đang đổ dữ liệu cho bảng `thuoc_tinh`
 --
 
-INSERT INTO `thuoc_tinh` (`id`, `ten_thuoc_tinh`) VALUES
-(1, 'cpu'),
-(2, 'ram'),
-(3, 'ssd'),
-(4, 'vga');
+INSERT INTO `thuoc_tinh` (`id`, `ten_thuoc_tinh`, `is_delete`) VALUES
+(1, 'cpu', 0),
+(2, 'ram', 0),
+(3, 'ssd', 0),
+(4, 'vga', 0);
 
 --
 -- Chỉ mục cho các bảng đã đổ
@@ -378,6 +475,13 @@ ALTER TABLE `chi_tiet_don_hang`
   ADD PRIMARY KEY (`id_donhang`,`sku_id`),
   ADD KEY `FK_ctdh_skus` (`sku_id`),
   ADD KEY `FK_ctdh_donhang` (`id_donhang`);
+
+--
+-- Chỉ mục cho bảng `chi_tiet_gio_hang`
+--
+ALTER TABLE `chi_tiet_gio_hang`
+  ADD PRIMARY KEY (`id_gio_hang`,`id_sku`),
+  ADD KEY `FK_ctgh_skus` (`id_sku`);
 
 --
 -- Chỉ mục cho bảng `chi_tiet_phieu_nhap`
@@ -485,7 +589,7 @@ ALTER TABLE `thuoc_tinh`
 -- AUTO_INCREMENT cho bảng `chuc_nang`
 --
 ALTER TABLE `chuc_nang`
-  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT cho bảng `danh_muc`
@@ -497,7 +601,7 @@ ALTER TABLE `danh_muc`
 -- AUTO_INCREMENT cho bảng `don_hang`
 --
 ALTER TABLE `don_hang`
-  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT cho bảng `gia_tri_thuoc_tinh`
@@ -509,13 +613,13 @@ ALTER TABLE `gia_tri_thuoc_tinh`
 -- AUTO_INCREMENT cho bảng `gio_hang`
 --
 ALTER TABLE `gio_hang`
-  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT cho bảng `nhom_quyen`
 --
 ALTER TABLE `nhom_quyen`
-  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT cho bảng `phieu_nhap`
@@ -555,8 +659,15 @@ ALTER TABLE `thuoc_tinh`
 -- Các ràng buộc cho bảng `chi_tiet_don_hang`
 --
 ALTER TABLE `chi_tiet_don_hang`
-  ADD CONSTRAINT `FK_ctdh_donhang` FOREIGN KEY (`id_donhang`) REFERENCES `don_hang` (`id`),
-  ADD CONSTRAINT `FK_ctdh_skus` FOREIGN KEY (`sku_id`) REFERENCES `skus` (`id`);
+  ADD CONSTRAINT `FK_ctdh_donhang` FOREIGN KEY (`id_donhang`) REFERENCES `don_hang` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `FK_ctdh_skus` FOREIGN KEY (`sku_id`) REFERENCES `skus` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Các ràng buộc cho bảng `chi_tiet_gio_hang`
+--
+ALTER TABLE `chi_tiet_gio_hang`
+  ADD CONSTRAINT `FK_ctgh_giohang` FOREIGN KEY (`id_gio_hang`) REFERENCES `gio_hang` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `FK_ctgh_skus` FOREIGN KEY (`id_sku`) REFERENCES `skus` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Các ràng buộc cho bảng `chi_tiet_phieu_nhap`

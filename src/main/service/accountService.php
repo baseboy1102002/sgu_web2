@@ -45,6 +45,12 @@ class accountService {
     public function findRoleByUserNameAndPassword($username, $password) {
         return $this->accountDAO->findRoleByUserNameAndPassword($username, $password);
     }
+
+    //  CODE T MỚI VIẾT NGÀY 9/5, M SỬA Ở TRÊN THOẢI MÁI, ĐỪNG ĐỘNG VÔ CODE DƯỚI NÀY //
+    public function updateIdNhomQuyen($id_nhom_quyen) {
+        $result = $this->accountDAO->updateIdNhomQuyen($id_nhom_quyen);
+        return $result>=0;
+    }
 }
 
 ?>

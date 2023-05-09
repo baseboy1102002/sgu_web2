@@ -70,10 +70,10 @@ class attributeValueAPI{
         }
     }
 
-    public function update_Attribute_Value($id) {
+    public function update_Attribute_Value() {
         $data = json_decode(file_get_contents('php://input'), true);
         $attributeValueDTO = new attributeValueDTO();
-        $attributeValueDTO->setId($id);
+        $attributeValueDTO->setIds($data['id_gia_tri']);
         $attributeValueDTO->setGia_tri($data['gia_tri']);
         $attributeValueDTO->setId_thuoc_tinh($data['id_thuoc_tinh']);
         $result = $this->attributeValueService->updateAttributeValue($attributeValueDTO);
@@ -123,10 +123,11 @@ switch ($method) {
         break;
     case 'PUT':
         // UPDATE
-        if (isset($_GET['id'])) {
-            $id = intval($_GET['id']);
-            $attributeValueAPI->update_Attribute_Value($id);
-        }
+        // if (isset($_GET['id'])) {
+        //     $id = intval($_GET['id']);
+        //     $attributeValueAPI->update_Attribute_Value($id);
+        // }
+        $attributeValueAPI->update_Attribute_Value();
         break;
     case 'DELETE':
         // Delete

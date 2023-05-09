@@ -33,7 +33,7 @@ class attributeValueService {
     }
 
     public function updateAttributeValue($attributeValueDTO) {
-        return $this->attributeValueDAO->updateAttributeValue($attributeValueDTO);
+        return $this->attributeValueDAO->updateAttributeValue($attributeValueDTO)>=0;
     }
 
     public function deleteAttributeValue($id) {

@@ -107,6 +107,7 @@ class accountAPI{
             session_start();
             $_SESSION['account_id'] = $account_id;
             $_SESSION['account_ten-nhom-quyen'] = $this->accountService->findRoleByUserNameAndPassword($data['username'], $data['password'])->fetch_array()[0];
+            $_SESSION['account_id-nhom-quyen'] = $this->accountService->findRoleByUserNameAndPassword($data['username'], $data['password'])->fetch_array()[1];
             $_SESSION['account_username'] = $account_username;
             header('Content-Type: application/json');
             header('HTTP/1.0 204 No Content');

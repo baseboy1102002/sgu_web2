@@ -2,9 +2,10 @@
 
     class attributeValueDTO {
         private $id;
-        private $gia_tri;
+        private $gia_tri = array();
         private $id_thuoc_tinh;
-
+        private $ids = array();
+        
         public function setId($id) {
             $this->id = $id;
         }
@@ -24,6 +25,13 @@
         }
         public function getId_thuoc_tinh() {
             return $this->id_thuoc_tinh;
+        }
+
+        public function setIds($ids) {
+            $this->ids = $ids;
+        }
+        public function getIds() {
+            return $this->ids;
         }
     }
 

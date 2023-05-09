@@ -50,7 +50,6 @@
         }            
     ?>
     <div class="form-contain">
-
         <div class="form-header">
             <div class="form-title">
                 <h3 id="sign-up" class="active">Đăng Ký</h3>

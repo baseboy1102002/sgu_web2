@@ -22,14 +22,13 @@ class attributeService {
         return $result;
     }
 
-    // return type: Int (id category)
     public function save($attributeDTO) {
         $result = $this->attributeDAO->save($attributeDTO);
         return $result;
     }
 
     public function updateAttribute($attributeDTO) {
-        return $this->attributeDAO->updateAttribute($attributeDTO);
+        return $this->attributeDAO->updateAttribute($attributeDTO)>=0;
     }
 
     public function deleteAttribute($id) {

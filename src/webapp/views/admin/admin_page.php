@@ -3,12 +3,12 @@
     session_start();
     if(!isset($_SESSION["account_id"])) {
         // not authencation
-        header("Location: ../login/login.php");
+        header("Location: ../login/login.php?msg=Đăng nhập để tiếp tục truy cập&alert=warning");
         exit();
     }
     if(strcmp($_SESSION['account_ten-nhom-quyen'], "user")==0) {
         // not authorized
-        header("Location: ../user-page/index.php");
+        header("Location: ../login/login.php?msg=Quyền truy cập bị từ chối&alert=warning");
         exit();
     }
 
@@ -57,7 +57,7 @@
         margin-right: 0;
     }
     
-    .product_filter_category {
+    .product_filter_category, .variant_filter_category {
         padding-right: 0px;
         width: 100px;
     }
@@ -108,21 +108,27 @@
 </style>
 
 <body>
+    <?php 
+        if(isset($_SESSION["account_id-nhom-quyen"]))
+        echo '<input type="hidden" id="account_id_nhom_quyen" value='.$_SESSION["account_id-nhom-quyen"].'>';
+    ?>
     <!-- toast message -->
     <div id="toast"></div>
     <!-- nav bar -->
     <nav class="navbar navbar-inverse navbar-fixed-top">
         <div class="container-fluid">
             <div class="navbar-header">
-                <a class="navbar-brand" href="#"><i class="fa-solid fa-gear"></i> My Admin</a>
+                <a class="navbar-brand" href="#"><i class="fa-solid fa-gear"></i> ADMIN PAGE</a>
             </div>
             <ul class="nav navbar-nav">
-                <li class="active"><a href="#">Home</a></li>
+                <li class="active"><a href="../user-page/index.php">Về shop</a></li>
             </ul>
 
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="#"><span class="glyphicon glyphicon-user"></span> Admin</a></li>
-                <li class="logOut"><a href="#"><span class="glyphicon glyphicon-log-in "></span> Đăng xuất</a></li>
+                <?php
+                echo '<li><a href="#"><span class="glyphicon glyphicon-user"></span>'." ".$_SESSION['account_username'].'</a></li>'
+                ?>
+                <li id="logOut"><a href="#"><span class="glyphicon glyphicon-log-in "></span> Đăng xuất</a></li>
             </ul>
         </div>
     </nav>
@@ -174,7 +180,7 @@
                                     <tr class="category_list_header">
                                         <th class="category_list_items">Mã danh mục</th>
                                         <th class="category_list_items">Tên danh mục</th>
-                                        <th class="category_list_items">Actions</th>
+                                        <th class="category_list_items">Thao tác</th>
                                     </tr>
                                 </thead>
                                 <tbody class="category_list">
@@ -240,7 +246,7 @@
                     </div>
 
                 </div>
-                <div class="tabs product_tab product">
+                <div class="tabs product_tab product tab_hide">
                     <div class="product_tab_heading">
                         <h2>QUẢN LÝ SẢN PHẨM</h2>
                         <hr>
@@ -248,7 +254,7 @@
                     </div>
                     <div class="product_search row" style="margin-bottom: 10px;">
                         <div class="col-md-2">
-                            <button type="button" class="btn btn-success" id="product_add_btn" data-toggle="modal" data-target="#product_modal">Thêm sản phẩm</button>
+                            <button type="button" class="btn btn-success" id="product_add_btn">Thêm sản phẩm</button>
                         </div>
                         <div class="product_filter col-md-2" style="position: absolute;left: 600px;">
                             <select class="form-control product_filter_category" style="margin-right: 0;">
@@ -269,9 +275,10 @@
                                 <table class="table table-hover">
                                     <thead>
                                         <tr class="product_list_header">
+                                            <th class="product_list_items">Mã sp</th>
                                             <th class="product_list_items">Hình ảnh</th>
                                             <th class="product_list_items">Tên sản phẩm</th>
-                                            <th class="product_list_items">Actions</th>
+                                            <th class="product_list_items">Thao tác</th>
                                         </tr>
                                     </thead>
                                     <tbody class="product_list">
@@ -290,7 +297,7 @@
                             </ul>
                         </nav>
                         <!-- product_delete_modal -->
-                        <div class="modal fade product_modal_hide" id="product_delete_modal" role="dialog">
+                        <div class="modal fade" id="product_delete_modal" role="dialog">
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">
@@ -301,14 +308,16 @@
                                         <form>
                                             <div class="form-group">
                                                 <label for="product_delete_id">Mã sản phẩm</label>
-                                                <input class="form-input" type="text" id="product_delete_id" readonly>
+                                                <input class="form-input form-control" type="text" id="product_delete_id" readonly>
                                             </div>
                                             <div class="form-group">
                                                 <label for="product_delete_name">Tên sản phẩm</label>
-                                                <input class="form-input" type="text" id="product_delete_name" readonly>
+                                                <input class="form-input form-control" type="text" id="product_delete_name" readonly>
                                             </div>
-                                            <button type="button" class="btn btn-success" id="product_confirm_delete_btn">Xác nhận</button>
-                                            <button type="button" class="btn btn-danger" data-dismiss="modal" id="product_cancel_btn">Hủy</button>
+                                            <div class="text-center">
+                                                <button type="button" class="btn btn-success" id="product_confirm_delete_btn">Xác nhận</button>
+                                                <button type="button" class="btn btn-danger" data-dismiss="modal" id="product_cancel_btn">Hủy</button>
+                                            </div>
                                         </form>
                                     </div>
                                 </div>
@@ -351,7 +360,7 @@
                                             <div class="form-group">
                                                 <div id="img_review"></div>
                                             </div>
-                                            <div class="form-btns">
+                                            <div class="modal-footer form-btns">
                                                 <button type="submit" class="btn btn-success" id="product_confirm_btn">Xác nhận</button>
                                                 <button type="button" class="btn btn-danger" data-dismiss="modal" id="product_cancel_btn">Hủy</button>
                                             </div>
@@ -441,7 +450,7 @@
                                             <th class="account_list_items">Tên tài khoản</th>
                                             <th class="account_list_items">Phân quyền</th>
                                             <th class="account_list_items">Thông tin</th>
-                                            <th class="account_list_items">Actions</th>
+                                            <th class="account_list_items">Thao tác</th>
                                         </tr>
                                     </thead>
                                     <tbody class="account_list">
@@ -549,7 +558,7 @@
                     </div>
                 </div>
 
-                <div class="tabs report_tab report tab_hide">
+                <div class="tabs report_tab report">
                     <div class="report_tab_heading">
                         <h2>THỐNG KÊ KINH DOANH</h2>
                         <hr>
@@ -609,7 +618,7 @@
                         <div class="notification_attribute"></div>
                     </div>
                     <div>
-                        <button type="button" class="btn btn-success" id="attribute_add_btn" data-toggle="modal" data-target="#attribute_modal" style="margin-bottom: 10px;">Thêm thuộc tính</button>
+                        <button type="button" class="btn btn-success" id="attribute_add_btn"style="margin-bottom: 10px;">Thêm thuộc tính</button>
                     </div>
                     <div class="panel panel-primary">
                         <div class="panel-heading">Thuộc tính</div>
@@ -619,8 +628,7 @@
                                     <tr class="attribute_list_header">
                                         <th class="attribute_list_items">Mã thuộc tính</th>
                                         <th class="attribute_list_items">Tên thuộc tính</th>
-                                        <th class="attribute_list_items">Giá trị thuộc tính</th>
-                                        <th class="attribute_list_items">Actions</th>
+                                        <th class="attribute_list_items text-center">Thao tác</th>
                                     </tr>
                                 </thead>
                                 <tbody class="attribute_list">
@@ -630,7 +638,7 @@
                         </div>
                     </div>
 
-                    <div class="modal fade attribute_modal attribute_modal_hide" id="attribute_modal" role="dialog">
+                    <div class="modal fade" id="attribute_modal" role="dialog" data-action="add">
                         <div class="modal-dialog attribute_modal_form">
                             <div class="modal-content">
                                 <div class="modal-header">
@@ -638,31 +646,72 @@
                                     <h4 class="modal-title modal-title-attribute">Thêm thuộc tính</h4>
                                 </div>
                                 <div class="modal-body">
-                                    <form>
-                                        <div class="form-group">
-                                            <label for="attributeId">Mã thuộc tính</label>
-                                            <input class="form-input form-control" type="text" id="attributeId">
+                                    <form id="attribute_form">
+                                        <div class="panel panel-primary">
+                                            <div class="panel-heading">Thông tin thuộc tính</div>
+                                            <div class="panel-body">
+                                                <div class="row">
+                                                    <div class="form-group col-md-12">
+                                                        <label for="variant_id">Mã thuộc tính</label>
+                                                        <input class="form-input form-control" name="id" type="text" id="attribute_id" readonly>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group col-md-12">
+                                                        <label for="attribute_name">Tên thuộc tính</label>
+                                                        <input class="form-input form-control" type="text" name="ten_thuoc_tinh" id="attribute_name" required>
+                                                        <span class="form-messege"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="form-group">
-                                            <label for="attributeName">Tên thuộc tính</label>
-                                            <input class="form-input form-control" type="text" id="attributeName">
+                                        <div class="panel panel-primary">
+                                            <div class="panel-heading">Các giá trị</div>
+                                            <div class="panel-body">
+                                                <div class="row">
+                                                    <div class="form-group col-md-8">
+                                                        <label for="attribute_value">Giá trị</label>
+                                                        <input class="form-input form-control" type="text" id="attribute_value">
+                                                    </div>
+                                                    <div class="btn btn-success col-md-2" style="margin-top: 24px;" id="add_attribute_value"><i class="fas fa-plus"></i></div>
+                                                </div>
+                                                <span id="attribute_messege" style="color: red;"></span>
+                                                <table class="table table-hover">
+                                                    <thead>
+                                                        <tr class="attribute_list_header">
+                                                            <th class="attribute_list_items">Giá trị</th>
+                                                            <th class="attribute_list_items text-center">Thao tác</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody class="attributeValue_list">
+                                                        <!-- <tr class="variantAttribute_item">
+                                                            <td class="attribute_value">Ryzen 5</td>
+                                                            <td class="attribute_delete text-center"><i class="fa-solid fa-trash attributeValue_del_btn"></i></td>
+                                                        </tr>
+                                                        <tr class="variantAttribute_item">
+                                                            <td class="attribute_value">Intel i9</td>
+                                                            <td class="attribute_delete text-center"><i class="fa-solid fa-trash attributeValue_del_btn"></i></td>
+                                                        </tr>
+                                                        <tr class="variantAttribute_item">
+                                                            <td class="attribute_value">Ryzen 7</td>
+                                                            <td class="attribute_delete text-center"><i class="fa-solid fa-trash attributeValue_del_btn"></i></td>
+                                                        </tr> -->
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         </div>
-                                        <div class="form-group">
-                                            <label for="attributeValue">Giá trị thuộc tính</label>
-                                            <input class="form-input form-control" type="text" id="attributeValue">
+                                        <div class="modal-footer form-btns">
+                                            <button type="submit" class="btn btn-success" id="attribute_confirm_btn">Xác nhận</button>
+                                            <button type="button" class="btn btn-danger" data-dismiss="modal" id="attribute_cancel_btn">Hủy</button>
                                         </div>
-                                        <span class="message" style="color: red;"></span>
                                     </form>
                                 </div>
-                                <div class="modal-footer form-btns">
-                                    <button type="button" class="btn btn-success" id="attribute_confirm_btn">Xác nhận</button>
-                                    <button type="button" class="btn btn-danger" data-dismiss="modal" id="attribute_cancel_btn">Hủy</button>
-                                </div>
+                                
                             </div>
                         </div>
                     </div>
 
-                    <div class="modal fade attribute_delete_modal attribute_modal_hide" id="attribute_delete_modal" role="dialog">
+                    <div class="modal fade" id="attribute_delete_modal" role="dialog">
                         <div class="modal-dialog attribute_modal_form">
                             <div class="modal-content">
                                 <div class="modal-header">
@@ -672,22 +721,18 @@
                                 <div class="modal-body">
                                     <form>
                                         <div class="form-group">
-                                            <label for="attribute_id">Mã thuộc tính</label>
-                                            <input class="form-input form-control attribute_delete_id" type="text" id="attribute_id">
+                                            <label for="attribute_delete_id">Mã thuộc tính</label>
+                                            <input class="form-input form-control" type="text" id="attribute_delete_id" readonly>
                                         </div>
                                         <div class="form-group">
-                                            <label for="attribute_name">Tên thuộc tính</label>
-                                            <input class="form-input form-control attribute_delete_name" type="text" id="attribute_name">
+                                            <label for="attribute_delete_name">Tên thuộc tính</label>
+                                            <input class="form-input form-control" type="text" id="attribute_delete_name" readonly>
                                         </div>
-                                        <div class="form-group">
-                                            <label for="attribute_value">Giá trị thuộc tính</label>
-                                            <input class="form-input form-control attribute_delete_value" type="text" id="attribute_value">
+                                        <div class="text-center">
+                                            <button type="button" class="btn btn-success" id="attribute_delete_confirm_btn">Xác nhận</button>
+                                            <button type="button" class="btn btn-danger" data-dismiss="modal" id="attribute_cancel_btn">Hủy</button>
                                         </div>
                                     </form>
-                                </div>
-                                <div class="modal-footer form-btns">
-                                    <button type="button" class="btn btn-success attribute_confirm_delete_btn" id="attribute_delete_confirm_btn">Xác nhận</button>
-                                    <button type="button" class="btn btn-danger" data-dismiss="modal" id="attribute_cancel_btn">Hủy</button>
                                 </div>
                             </div>
                         </div>
@@ -703,7 +748,12 @@
                     </div>
                     <div class="variant_search row" style="margin-bottom: 10px;">
                         <div class="col-md-2">
-                            <button type="button" class="btn btn-success" id="variant_add_btn" data-toggle="modal" data-target="#variant_modal">Thêm biến thể</button>
+                            <button type="button" class="btn btn-success" id="variant_add_btn">Thêm biến thể</button>
+                        </div>
+                        <div class="variant_filter col-md-2" style="position: absolute;left: 600px;">
+                            <select class="form-control variant_filter_category" style="margin-right: 0;">
+
+                            </select>
                         </div>
                         <div class="variant_searchbar input-group col-md-1" style="position: absolute;right: 16px; width: 400px;">
                             <input type="text" class="form-control" id="variant_search_input" placeholder="Search" name="search">
@@ -723,8 +773,7 @@
                                         <th class="variant_list_items">Đơn giá</th>
                                         <th class="variant_list_items">Số lượng</th>
                                         <th class="variant_list_items">Mã sản phẩm</th>
-                                        <th class="variant_list_items">Chi tiết</th>
-                                        <th class="variant_list_items">Actions</th>
+                                        <th class="variant_list_items">Thao tác</th>
                                     </tr>
                                 </thead>
                                 <tbody class="variant_list">
@@ -760,7 +809,7 @@
                         </ul>
                     </nav>
 
-                    <div class="modal fade variant_modal" id="variant_modal" role="dialog" data-action="add">
+                    <div class="modal fade" id="variant_modal" role="dialog" data-action="add">
                         <div class="modal-dialog variant_modal_form">
                             <div class="modal-content">
                                 <div class="modal-header">
@@ -829,11 +878,11 @@
                                                         <tr class="variant_list_header">
                                                             <th class="variant_list_items">Thuộc tính</th>
                                                             <th class="variant_list_items">Giá trị</th>
-                                                            <th class="variant_list_items">Actions</th>
+                                                            <th class="variant_list_items">Thao tác</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody class="variantAttributeDetail_list">
-
+                                                       
                                                     </tbody>
                                                 </table>
                                                 <span class="variantAttribute_messege" style="color: red;"></span>
@@ -850,7 +899,7 @@
                         </div>
                     </div>
 
-                    <div class="modal fade variant_modal_hide" id="variant_delete_modal" role="dialog ">
+                    <div class="modal fade" id="variant_delete_modal" role="dialog ">
                         <div class="modal-dialog variant_delete_modal_form">
                             <div class="modal-content">
                                 <div class="modal-header">
@@ -867,43 +916,11 @@
                                             <label for="variant_delete_name">Tên biến thể</label>
                                             <input class="form-input form-control" type="text" id="variant_delete_name" readonly>
                                         </div>
-                                        <button type="button" class="btn btn-success" id="variant_delete_confirm_btn">Xác nhận</button>
-                                        <button type="button" class="btn btn-danger" data-dismiss="modal" id="variant_delete_cancel_btn">Hủy</button>
+                                        <div class="text-center">
+                                            <button type="button" class="btn btn-success" id="variant_delete_confirm_btn">Xác nhận</button>
+                                            <button type="button" class="btn btn-danger" data-dismiss="modal" id="variant_delete_cancel_btn">Hủy</button>
+                                        </div>
                                     </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="modal fade variantDetail_modal variantDetail_modal_hide" id="variantDetail_modal" role="dialog">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                    <h4 class="modal-title modal-title-variantDetail">Chi tiết biến thể</h4>
-                                </div>
-                                <div class="modal-body">
-                                    <table class="table table-hover">
-                                        <thead>
-                                            <tr class="variant_list_header">
-                                                <th class="variant_list_items">Thuộc tính</th>
-                                                <th class="variant_list_items">Giá trị</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody class="variantDetail_list">
-                                            <tr class="variantDetail_item">
-                                                <td class="variantDetail_attribute">cpu</td>
-                                                <td class="variantDetail_value ">Intel</td>
-                                            </tr>
-                                            <tr class="variantDetail_item">
-                                                <td class="variantDetail_attribute">ram</td>
-                                                <td class="variantDetail_value ">8GB</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div class="modal-footer form-btns">
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                                 </div>
                             </div>
                         </div>
@@ -918,7 +935,7 @@
                         <div class="notification_permission"></div>
                     </div>
                     <div style="margin-bottom: 10px;">
-                        <button type="button" class="btn btn-success" id="permission_add_btn" data-toggle="modal" data-target="#permission_modal">Thêm nhóm quyền</button>
+                        <button type="button" class="btn btn-success" id="permission_add_btn">Thêm nhóm quyền</button>
                     </div>
                     <div class="panel panel-primary">
                         <div class="panel-heading">Nhóm quyền</div>
@@ -928,18 +945,14 @@
                                     <tr class="permission_list_header">
                                         <th class="permission_list_items">Mã nhóm quyền</th>
                                         <th class="permission_list_items">Tên nhóm quyền</th>
-                                        <th class="permission_list_items">Chi tiết</th>
-                                        <th class="permission_list_items">Actions</th>
+                                        <th class="permission_list_items">Thao tác</th>
                                     </tr>
                                 </thead>
                                 <tbody class="permission_list">
                                     <!-- dữ liệu cứng -->
-                                    <tr class="permission_list_content">
+                                    <!-- <tr class="permission_list_content">
                                         <td class="permission_list_item">1</td>
                                         <td class="permission_list_item">admin</td>
-                                        <td class="permission_list_item">
-                                            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#permissionDetail_modal">Xem chi tiết</button>
-                                        </td>
                                         <td class="permission_list_item">
                                             <button type="button" class="btn btn-danger permission_delete_btn" data-toggle="modal" data-target="#permission_delete_modal">
                                                 <i class="fa-solid fa-trash"></i>
@@ -948,14 +961,14 @@
                                                 <i class="fa-solid fa-pen-to-square"></i>
                                             </button>
                                         </td>
-                                    </tr>
+                                    </tr> -->
                                     <!-- dữ liệu cứng -->
                                 </tbody>
                             </table>
                         </div>
                     </div>
 
-                    <div class="modal fade permission_modal permission_modal_hide" id="permission_modal" role="dialog">
+                    <div class="modal fade" id="permission_modal" role="dialog" data-action="add">
                         <div class="modal-dialog permission_modal_form">
                             <div class="modal-content" style="width: 1000px;left: 50%;transform: translateX(-50%);">
                                 <div class="modal-header">
@@ -963,14 +976,14 @@
                                     <h4 class="modal-title modal-title-permission">Thêm nhóm quyền</h4>
                                 </div>
                                 <div class="modal-body">
-                                    <form method="" action="" name="" class="">
+                                    <form id="permission_form">
                                         <div class="form-group">
                                             <label for="permission_id">Mã nhóm quyền</label>
-                                            <input class="form-input form-control" type="text" id="permission_id">
+                                            <input class="form-input form-control" type="text" name="id_nhom_quyen" id="permission_id" readonly>
                                         </div>
                                         <div class="form-group">
                                             <label for="permission_name">Tên nhóm quyền</label>
-                                            <input class="form-input form-control" type="text" id="permission_name">
+                                            <input class="form-input form-control" type="text" name="ten_nhom_quyen" id="permission_name" required>
                                         </div>
                                         <span class="permisson-message" style="color: red; margin-left: 10px;"></span>
                                         <table class="table table-hover">
@@ -981,46 +994,12 @@
                                                 <th>Xóa</th>
                                                 <th>Xem</th>
                                             </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>Tài khoản</td>
-                                                    <td><input type="checkbox" class="permisson-checkbox"></td>
-                                                    <td><input type="checkbox" class="permisson-checkbox"></td>
-                                                    <td><input type="checkbox" class="permisson-checkbox"></td>
-                                                    <td><input type="checkbox" class="permisson-checkbox"></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Sản phẩm</td>
-                                                    <td><input type="checkbox" class="permisson-checkbox"></td>
-                                                    <td><input type="checkbox" class="permisson-checkbox"></td>
-                                                    <td><input type="checkbox" class="permisson-checkbox"></td>
-                                                    <td><input type="checkbox" class="permisson-checkbox"></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Danh mục</td>
-                                                    <td><input type="checkbox" class="permisson-checkbox"></td>
-                                                    <td><input type="checkbox" class="permisson-checkbox"></td>
-                                                    <td><input type="checkbox" class="permisson-checkbox"></td>
-                                                    <td><input type="checkbox" class="permisson-checkbox"></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Thuộc tính</td>
-                                                    <td><input type="checkbox" class="permisson-checkbox"></td>
-                                                    <td><input type="checkbox" class="permisson-checkbox"></td>
-                                                    <td><input type="checkbox" class="permisson-checkbox"></td>
-                                                    <td><input type="checkbox" class="permisson-checkbox"></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Đơn hàng</td>
-                                                    <td><input type="checkbox" class="permisson-checkbox"></td>
-                                                    <td><input type="checkbox" class="permisson-checkbox"></td>
-                                                    <td><input type="checkbox" class="permisson-checkbox"></td>
-                                                    <td><input type="checkbox" class="permisson-checkbox"></td>
-                                                </tr>
+                                            <tbody id="permission_feature_detail">
+                                                
                                             </tbody>
                                         </table>
                                         <div class="modal-footer form-btns">
-                                            <button type="button" class="btn btn-success" id="permission_confirm_btn">Xác nhận</button>
+                                            <button type="submit" class="btn btn-success" id="permission_confirm_btn">Xác nhận</button>
                                             <button type="button" class="btn btn-danger" data-dismiss="modal" id="permission_cancel_btn">Hủy</button>
                                         </div>
                                     </form>
@@ -1029,7 +1008,7 @@
                         </div>
                     </div>
 
-                    <div class="modal fade permission_delete_modal permission_modal_hide" id="permission_delete_modal" role="dialog ">
+                    <div class="modal fade" id="permission_delete_modal" role="dialog ">
                         <div class="modal-dialog permission_delete_modal_form ">
                             <div class="modal-content">
                                 <div class="modal-header">
@@ -1040,14 +1019,14 @@
                                     <form>
                                         <div class="form-group">
                                             <label for="permission_delete_id">Mã nhóm quyền</label>
-                                            <input class="form-input form-control permission_delete_id" type="text " id="permission_delete_id" readonly>
+                                            <input class="form-input form-control" type="text " id="permission_delete_id" readonly>
                                         </div>
                                         <div class="form-group">
                                             <label for="permission_delete_name">Tên nhóm quyền</label>
-                                            <input class="form-input form-control permission_delete_name" type="text" id="permission_delete_name" readonly>
+                                            <input class="form-input form-control" type="text" id="permission_delete_name" readonly>
                                         </div>
                                         <div class="modal-footer form-btns ">
-                                            <button type="button" class="btn btn-success permission_confirm_delete_btn " id="permission_delete_confirm_btn">Xác nhận</button>
+                                            <button type="button" class="btn btn-success" id="permission_delete_confirm_btn">Xác nhận</button>
                                             <button type="button" class="btn btn-danger" data-dismiss="modal" id="permission_delete_cancel_btn">Hủy</button>
                                         </div>
                                     </form>

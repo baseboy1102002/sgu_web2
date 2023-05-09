@@ -5,7 +5,7 @@
     z-index: 999999;
   }
   
-  .toast {
+  .mytoast {
     display: flex;
     align-items: center;
     background-color: #fff;
@@ -67,7 +67,7 @@
     color: #ff623d;
   }
   
-  .toast + .toast {
+  .mytoast + .mytoast {
     margin-top: 24px;
   }
   

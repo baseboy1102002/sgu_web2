@@ -13,6 +13,17 @@ let money = Intl.NumberFormat('vi-VN', {
 const imgFolder = '../../../uploads/';
 let id_gio_hang;
 $(document).ready(function () {
+    let id_acc = $('#logged-in').val();
+    if(id_acc != null){
+        $.get("../../../main/controller/api/cartAPI.php", function (response) {
+            id_gio_hang=response.id;
+            $.get(`../../../main/controller/api/cartAPI.php?cartView=${id_gio_hang}`,function(response){
+                if(response.length>0) {
+                    $('#total_cart_item').text(`(${response.length})`);
+                }
+            })
+        })
+    }
     $.ajax({
         type: "GET",
         url: "../../../main/controller/api/productVariantsAPI.php",
@@ -36,7 +47,21 @@ $(document).ready(function () {
     })
     search()
     filterByPrice()
+    scrolltoTop()
 });
+
+function scrolltoTop(){
+    const scrolltoTopBtn = document.querySelector("#scroll_top_btn")
+    scrolltoTopBtn.onclick=()=>{
+        window.scrollTo({top: 0, behavior: 'smooth'})
+    }
+}
+
+window.addEventListener("scroll", function(e){
+    let top = this.scrollY
+    if(top<400) document.querySelector("#scroll_top_btn").style.display = "none"
+    else document.querySelector("#scroll_top_btn").style.display = "unset"
+})
 
 function getParentElement(element, parent) {
     while(element.parentElement) {
@@ -62,7 +87,7 @@ function loadProduct(products) {
             <div class="product_items" data-sku-id="${item.id}" data-pd-id="${item.id_sp}">
                 <div class="product_items-img" style="background-image: url(${imgFolder}${item.img_path})"></div>
                 <div class="product_items-name">${item.tensp}</div>
-                <div class="product_items-price">${item.don_gia} VND</div>
+                <div class="product_items-price">${money.format(item.don_gia)}</div>
                 <div class="product_items-modal">
                     <div class="product_items-addBtn"><i class="fa-solid fa-cart-shopping"></i></div>
                     <div class="product_item-detailBtn">
@@ -83,34 +108,35 @@ function loadProduct(products) {
 function loadPage(totalItem) {
     let str = '';
     let totalPage = Math.ceil(totalItem/pageable.itemPerPage)
-    console.log(totalPage)
     if(totalPage<=1){
-        $(".page_list").html(str)
+        $(".pagination").html(str)
         return
     }
+    str += '<li class="page-item" data-page="pre"><a class="page-link" href="">Previous</a></li>'
     for(let i=1; i<=totalPage; i++) {
         if(pageable.page==i) {
             str+= `
-                <a href="">
-                    <li class="page_list-items page_list_item-active">${i}</li>
-                </a>
+                <li class="page-item active" data-page="${i}"><a class="page-link" href="">${i}</a></li>
             `
         }
         else
             str+= `
-                <a href="">
-                    <li class="page_list-items">${i}</li>
-                </a>
+                <li class="page-item" data-page="${i}"><a class="page-link" href="">${i}</a></li>
             `
     }
-    $(".page_list").html(str)
+    str += '<li class="page-item" data-page="next"><a class="page-link" href="">Next</a></li>'
+    $(".pagination").html(str)
+    
     // when click and change page
-    $(".page_list a").each(function(index, element) {
+    $(".page-item").each(function(index, element) {
         $(element).click(function (e){
             e.preventDefault();
-            $(".page_list_item-active").removeClass("page_list_item-active")
-            if(pageable.page != index+1) {
-                pageable.page = index+1;
+            let page = $(element).data('page')
+            if(page==="pre") page = pageable.page > 1? pageable.page-1 : pageable.page
+            if(page==="next") page = pageable.page < totalPage ? pageable.page+1 : pageable.page
+            if(pageable.page != page) {
+                $(".page-item.active").removeClass("active")
+                pageable.page = page;
                 $.ajax({
                     type: "GET",
                     url: "../../../main/controller/api/productVariantsAPI.php",
@@ -125,6 +151,52 @@ function loadPage(totalItem) {
         })
     });
 }
+
+// function loadPage(count) {
+//     let str = '';
+//     let totalPage = Math.ceil(count/product_pageable.itemPerPage)
+//     if(totalPage<=1){
+//         $("#product_pagination").html(str)
+//         return
+//     }
+//     str += '<li class="page-item" data-page="pre"><a class="page-link" href="">Previous</a></li>'
+//     for(let i=1; i<=totalPage; i++) {
+//         if(product_pageable.page==i) {
+//             str+= `
+//                 <li class="page-item active" data-page="${i}"><a class="page-link" href="">${i}</a></li>
+//             `
+//         }
+//         else
+//             str+= `
+//                 <li class="page-item" data-page="${i}"><a class="page-link" href="">${i}</a></li>
+//             `
+//     }
+//     str += '<li class="page-item" data-page="next"><a class="page-link" href="">Next</a></li>'
+//     $("#product_pagination").html(str)
+
+//     $(".page-item").each(function(index, element) {
+//         $(element).click(function (e) {
+//             e.preventDefault();
+//             let page = $(element).data('page');
+//             if(page==="pre") page = product_pageable.page > 1? product_pageable.page-1 : product_pageable.page
+//             if(page==="next") page = product_pageable.page < totalPage ? product_pageable.page+1 : product_pageable.page
+//             if(product_pageable.page != page) {
+//                 $(".page-item.active").removeClass("active")
+//                 product_pageable.page = page;
+//                 $.ajax({
+//                     type: "GET",
+//                     url: "../../../main/controller/api/productAPI.php",
+//                     data: product_pageable,
+//                     dataType: "json",
+//                     success: function (response) {
+//                         loadProducts(response.products)
+//                         loadPage(response.count)
+//                     }
+//                 });
+//             }
+//         })
+//     });
+// }                                       
 
 
 function loadCategory(categories, categoryList_querySelector, categoryItems_querySelector) {
@@ -190,6 +262,7 @@ function search() {
                 success: function (response) {
                     loadProduct(response.products)
                     loadPage(response.count)
+                    window.scrollTo({top: 650, behavior: 'smooth'})
                 },
                 error: function(jqXHR, exception) {
                     loadProduct([])
@@ -291,10 +364,10 @@ function loadProductDetailModal(sku_id, variants) {
     const imgFolder = '../../../uploads/'
     $("#pd_detail_item").attr("data-sku-id", sku_id);
     $(".product-name").text(variants[sku_id].sku_name);
-    $(".product-price").text(variants[sku_id].don_gia);
+    $(".product-price").html(`<span style="color: #333;">Giá:</span> ${money.format(variants[sku_id].don_gia)}`);
     $(".product-img").css('background-image', `url(${imgFolder}${variants[sku_id].img_path})`);
     $(".product-desc").text(variants[sku_id].description);
-    $(".product-quantity").text(variants[sku_id].so_luong);
+    $(".product-quantity").text(`Còn lại: ${variants[sku_id].so_luong}`);
     let str = ""
     for (var id in variants) {
         let variantString = ""
@@ -320,9 +393,9 @@ function loadProductDetailModal(sku_id, variants) {
             $(".variant_item_box-active").removeClass("variant_item_box-active");
             $(this).addClass("variant_item_box-active")
             $(".product-name").text(variants[sku_id_clicked].sku_name);
-            $(".product-price").text(variants[sku_id_clicked].don_gia);
+            $(".product-price").html(`<span style="color: #333;">Giá:</span> ${money.format(variants[sku_id_clicked].don_gia)}`);
             $(".product-desc").text(variants[sku_id_clicked].description);
-            $(".product-quantity").text(variants[sku_id_clicked].so_luong);
+            $(".product-quantity").text(`Còn lại: ${variants[sku_id_clicked].so_luong}`);
             $("#pd_detail_item").attr("data-sku-id", sku_id_clicked);
         });
     });
@@ -338,15 +411,25 @@ function ReadyCart() {
             addToCart();
             loadCartBtn();
         })
-    }else {
-            $('.product_items-addBtn,.product-addToCartBtn').each(function (index,item) {
-                item.onclick = function() {
-                    alert("Bạn chưa đăng nhập"); 
-                } 
-            })
-            document.querySelector(".header_cart-icon").onclick = function (e) {
-                alert("Bạn chưa đăng nhập");
-            }
+    } else {
+        $('.product_items-addBtn,.product-addToCartBtn').each(function (index,item) {
+            item.onclick = function() {
+                toast({
+                    title: "Nhắc nhở!",
+                    message: "Bạn cần đăng nhập để lưu trữ giỏ hàng",
+                    type: "warning",
+                    duration: 4000
+                });
+            } 
+        })
+        document.querySelector(".header_cart-icon").onclick = function (e) {
+            toast({
+                title: "Nhắc nhở!",
+                message: "Bạn cần đăng nhập để sử dụng chức năng giỏ hàng",
+                type: "warning",
+                duration: 4000
+            });
+        }
 
         }
     }
@@ -371,10 +454,22 @@ function addToCart(){
                 contentType:"application/json",
                 dataType: "json",
                 success: function (response) {
-                    alert("Thêm vào giỏ hàng thành công");
+                    let total_cart_item = Number($('#total_cart_item').text().replace(/[()]/g,''))+1
+                    $('#total_cart_item').text(`(${total_cart_item})`)
+                    toast({
+                        title: "Thành công!",
+                        message: "Đã thêm vào giỏ hàng",
+                        type: "info",
+                        duration: 4000
+                    });
                 },
                 error: function (jqXHR, exception) {
-                    alert(jqXHR.responseText);
+                    toast({
+                        title: "Thông báo!",
+                        message: jqXHR.responseText,
+                        type: "info",
+                        duration: 4000
+                    });
                 },
             });
         }
@@ -389,107 +484,125 @@ function loadCartBtn(){
 }
 
 function renderCart(){
-        $.get(`../../../main/controller/api/cartAPI.php?cartView=${id_gio_hang}`,function(response){
-        $('.grid_row').html("");
-        $('.grid_row').addClass("cart-container");
+    $.get(`../../../main/controller/api/cartAPI.php?cartView=${id_gio_hang}`,function(response){
+        $('.grid_row.shop-section').addClass("hide");
+        $('.grid_row.cart-section').removeClass("hide");
+        $('.grid_row.cart-section').html('')
+        $('.grid_row.cart-section').addClass("cart-container");
         const title = document.createElement("div");
-        title.innerHTML=`<h3>Giỏ hàng</h3>`;
-        $('.grid_row').append(title);
+        title.innerHTML=`<h3>GIỎ HÀNG CỦA BẠN</h3>`;
+        $('.grid_row.cart-section').append(title);
         const order_detail =document.createElement("div");
         order_detail.classList.add("order-details");
-        if(response.length!=0)
-        response.forEach(function (item) {
-            let price = item.don_gia*item.quantity;
-            const orderRow = document.createElement("div");
-            orderRow.classList.add("order-row");
-            orderRow.setAttribute('data-id',item.id_sku);
-            let str=`
-            <div class="order-row-left">
-                <div class="order-row-img"><img src="${imgFolder}${item.img_path}" alt=""></div>
-                <div class="order-row-name">${item.ten_sp}</div>
-            </div>
-            <div class="order-row-right">
-                <div class="order-right-price">${money.format(price)}</div>
-                <div class="order-right-quantity">
-                    <div class="quantity-details">`
-            if(item.in_stock !==0)
+        if(response.length!=0) {
+            $('#total_cart_item').text(`(${response.length})`)
+            let totalPrice = 0
+            response.forEach(function (item) {
+                let price = item.don_gia*item.quantity;
+                totalPrice += price
+                const orderRow = document.createElement("div");
+                orderRow.classList.add("order-row");
+                orderRow.setAttribute('data-id',item.id_sku);
+                let str=`
+                <div class="order-row-left">
+                    <div class="order-row-img"><img src="${imgFolder}${item.img_path}" alt=""></div>
+                    <div class="order-row-name">${item.ten_sp}</div>
+                </div>
+                <div class="order-row-right">
+                    <div class="order-right-price">${money.format(price)}</div>
+                    <div class="order-right-quantity">
+                        <div class="quantity-details">`
+                if(item.in_stock !==0)
+                    str+=`
+                            <span>${item.quantity}</span>
+                            <div class="quantity-navigation">
+                                <i class="fa-sharp fa-solid fa-chevron-up increase"></i>
+                                <i class="fa-solid fa-chevron-down decrease"></i>
+                            </div>`
+                else{
+                    str+=`
+                        <span style="color:red">Đã hết hàng !!!</span>
+                    `
+                }
                 str+=`
-                        <span>${item.quantity}</span>
-                        <div class="quantity-navigation">
-                            <i class="fa-sharp fa-solid fa-chevron-up increase"></i>
-                            <i class="fa-solid fa-chevron-down decrease"></i>
-                        </div>`
-            else{
-                str+=`
-                    <span style="color:red">Đã hết hàng !!!</span>
-                `
-            }
-            str+=`
+                        </div>
+                    </div>
+                    <div class="order-right-remove">
+                        <i class="fa-solid fa-trash cart_items-trash cart_items-deleteBtn"></i>
                     </div>
                 </div>
-                <div class="order-right-remove">
-                    <i class="fa-solid fa-trash cart_items-trash cart_items-deleteBtn"></i>
-                </div>
-            </div>
-            `;
-            orderRow.innerHTML=str;
-            order_detail.append(orderRow);
-        })
+                `;
+                orderRow.innerHTML=str;
+                order_detail.append(orderRow);
+            })
+            $('#payment_modal_total_price').text(`Tổng hóa đơn: ${money.format(totalPrice)}`);
+        }
         else{
             const Message = document.createElement("div");
-            Message.style.fontSize="1.5rem";
+            Message.style.fontSize="1.8rem";
+            Message.style.marginBottom="16px";
             Message.innerText="Không có sản phẩm trong giỏ hàng";
+            const back = '<button type="button" id="btn_back_to_shop" class="btn btn-outline-dark" style="margin-right:24px"><i class="fa-solid fa-arrow-left"></i> Tiếp tục mua hàng</button>'
             order_detail.append(Message);
+            $(order_detail).append(back);
         }
-        $('.grid_row').append(order_detail);
+        $('.grid_row.cart-section').append(order_detail);
+
         if(response.length!=0){
-        const btnContainer = document.createElement("div");
+            const btnContainer = document.createElement("div");
             btnContainer.style.margin = "24px";
             btnContainer.style.display = "flex";
             btnContainer.innerHTML =`
+            <button type="button" id="btn_back_to_shop" class="btn btn-outline-dark" style="margin-right:24px"><i class="fa-solid fa-arrow-left"></i> Tiếp tục mua hàng</button>
             <button type="button" class="update-cart-btn btn btn-outline-primary" style="margin-right:24px">Cập nhật</button>
             <button type="button" class="pay-cart-btn btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#payment-infor-modal">Thanh toán</button>
             `;
-            $('.grid_row').append(btnContainer);
+            $('.grid_row.cart-section').append(btnContainer);
             increaseQuantity();
             decreaseQuantity();
             updateCart();
             removeFromCart();
             payCart();
         }
+        $('#btn_back_to_shop').click(function (e) { 
+            e.preventDefault();
+            $('.grid_row.cart-section').addClass("hide");
+            $('.grid_row.cart-section').html("");
+            $('.grid_row.shop-section').removeClass("hide");
         });
+    });
         
-    }
-    function increaseQuantity() {
-        const increaseBtns = document.querySelectorAll(".increase");
-        increaseBtns.forEach(function(item) {
-            item.onclick = function() {
-                const itemQuantity = getParentElement(item, ".quantity-details");
-                let oldQuantity=itemQuantity.childNodes[1].innerText*1;
-                let newQuantity=oldQuantity+1;
-                const itemPrice= getParentElement(item,".order-row-right");
-                let oldPrice=itemPrice.childNodes[1].innerText.replace(/[₫.]+/g,"")
-                itemPrice.childNodes[1].innerText=money.format((oldPrice/oldQuantity)*newQuantity);
-                itemQuantity.childNodes[1].innerText=newQuantity;
-            }
-        })
-    }
-    function decreaseQuantity() {
-        const decreaseBtns = document.querySelectorAll(".decrease");
-        decreaseBtns.forEach(function(item) {
-            item.onclick = function() {
-                const itemQuantity = getParentElement(item, ".quantity-details");
-                let oldQuantity=itemQuantity.childNodes[1].innerText*1;
-                let newQuantity=oldQuantity-1;
-                if(newQuantity > 0){
-                itemQuantity.childNodes[1].innerText=newQuantity;
-                const itemPrice= getParentElement(item,".order-row-right");
-                let oldPrice=itemPrice.childNodes[1].innerText.replace(/[₫.]+/g,"")
-                itemPrice.childNodes[1].innerText=money.format((oldPrice/oldQuantity)*newQuantity);
-                itemQuantity.childNodes[1].innerText=newQuantity;
-            }}
-        })
-    }
+}
+function increaseQuantity() {
+    const increaseBtns = document.querySelectorAll(".increase");
+    increaseBtns.forEach(function(item) {
+        item.onclick = function() {
+            const itemQuantity = getParentElement(item, ".quantity-details");
+            let oldQuantity=itemQuantity.childNodes[1].innerText*1;
+            let newQuantity=oldQuantity+1;
+            const itemPrice= getParentElement(item,".order-row-right");
+            let oldPrice=itemPrice.childNodes[1].innerText.replace(/[₫.]+/g,"")
+            itemPrice.childNodes[1].innerText=money.format((oldPrice/oldQuantity)*newQuantity);
+            itemQuantity.childNodes[1].innerText=newQuantity;
+        }
+    })
+}
+function decreaseQuantity() {
+    const decreaseBtns = document.querySelectorAll(".decrease");
+    decreaseBtns.forEach(function(item) {
+        item.onclick = function() {
+            const itemQuantity = getParentElement(item, ".quantity-details");
+            let oldQuantity=itemQuantity.childNodes[1].innerText*1;
+            let newQuantity=oldQuantity-1;
+            if(newQuantity > 0){
+            itemQuantity.childNodes[1].innerText=newQuantity;
+            const itemPrice= getParentElement(item,".order-row-right");
+            let oldPrice=itemPrice.childNodes[1].innerText.replace(/[₫.]+/g,"")
+            itemPrice.childNodes[1].innerText=money.format((oldPrice/oldQuantity)*newQuantity);
+            itemQuantity.childNodes[1].innerText=newQuantity;
+        }}
+    })
+}
 function updateCart(){
     $(".update-cart-btn").click(function (e) { 
         e.preventDefault();
@@ -511,27 +624,37 @@ function updateCart(){
             data: JSON.stringify(cart_item_list),
             dataType: "json",
             success: function (response) {
-                $str=`Cập nhật thành công
+                let str=`Cập nhật thành công
 `;
                 if(response.outOfOrder.length !== 0 || response.inStock.length !==0){ 
-                    $str+=`các sản phẩm sau không đủ số lượng: 
+                    str+=`các sản phẩm sau không đủ số lượng: 
     `;    
                     response.outOfOrder.forEach(element => {
-                        $str+=`${element}
+                        str+=`${element}
      `;
                     });
                     response.inStock.forEach(element => {
-                        $str+=`${element}
+                        str+=`${element}
      `;
                     })
                 };
-                alert($str);
+                toast({
+                    title: "Thông báo!",
+                    message: str,
+                    type: "info",
+                    duration: 4000
+                });
                 renderCart();
             },
             error: function (jqXHR, exception) {
                 console.log(jqXHR);
                 console.log(exception);
-                alert("Số lượng cập nhật thất bại");
+                toast({
+                    title: "Thông báo!",
+                    message: "Đã có lỗi xảy ra ("+ exception +")",
+                    type: "error",
+                    duration: 4000
+                });
             },
         });
 
@@ -549,7 +672,12 @@ function removeFromCart(){
                 type: "DELETE",
                 url: `../../../main/controller/api/cartAPI.php?cartId=${id_gio_hang}&itemId=${itemId}`,
                 success: function (response) {
-                    alert("thành công");
+                    toast({
+                        title: "Thành công!",
+                        message: "Sản phẩm đã được xóa khỏi giỏ hàng",
+                        type: "success",
+                        duration: 4000
+                    });
                     item.remove();
                     if($(".order-details").children(".order-row").length==0){
                         const Message = document.createElement("div");
@@ -562,7 +690,12 @@ function removeFromCart(){
                 error: function (jqXHR, exception) {
                     console.log(jqXHR);
                     console.log(exception);
-                    alert("Rì mu thất bại");
+                    toast({
+                        title: "Lỗi!",
+                        message: "Đã có lỗi xảy ra ("+ exception +")",
+                        type: "error",
+                        duration: 4000
+                    });
                 },
             });
         });
@@ -582,19 +715,18 @@ function payCart(){
                     <td scope="col" class="col-sm-4">${element.ten_sp}</td>
                     `
                 if(element.in_stock==1){
-                str+=   ` <td scope="col" class="col-sm-2">${money.format(element.don_gia)}</td>
-                    <td scope="col" class="col-sm-1">${element.quantity}</td>
-                    <td scope="col" class="col-sm-2">${money.format(element.don_gia*element.quantity)}</td>
-                `             
-            }else str+=`
-            <td scope="col" class="col-sm-2"></td>
-            <td scope="col" class="col-sm-1"><span style="color:red">Đã hết hàng !!!</span></td>
-            <td scope="col" class="col-sm-2"></td>
-            `;
-            billItem.innerHTML=str;
+                    str+=   ` <td scope="col" class="col-sm-2">${money.format(element.don_gia)}</td>
+                        <td scope="col" class="col-sm-1">${element.quantity}</td>
+                        <td scope="col" class="col-sm-2">${money.format(element.don_gia*element.quantity)}</td>
+                    `             
+                } else str+=`
+                <td scope="col" class="col-sm-2"></td>
+                <td scope="col" class="col-sm-1"><span style="color:red">Đã hết hàng !!!</span></td>
+                <td scope="col" class="col-sm-2"></td>
+                `;
+                billItem.innerHTML=str;
                 $("#payment-check").children("tbody").append(billItem);
             });
-        
         });
 
     });
@@ -624,7 +756,12 @@ $(".payment-infor").submit(function (e) {
             error: function (jqXHR, exception) {
                 console.log(jqXHR);
                 console.log(exception);
-                alert(jqXHR.responseText);
+                toast({
+                    title: "Lỗi!",
+                    message: "Đã có lỗi xảy ra ("+ exception +")",
+                    type: "error",
+                    duration: 4000
+                });
             },
         });
     }

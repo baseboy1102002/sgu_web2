@@ -155,7 +155,7 @@ class productVariantsDAO extends dbDAO {
     }
     
     public function countResults($pageableDTO=null) {
-        $sql = "SELECT count(skus.id) FROM skus INNER JOIN san_pham as sp ON skus.id_sp = sp.id";
+        $sql = "SELECT count(skus.id) FROM skus INNER JOIN san_pham as sp ON skus.id_sp = sp.id WHERE skus.in_stock != 0";
         if($pageableDTO != null) {
             $type = "";
             $params = array();
@@ -163,7 +163,7 @@ class productVariantsDAO extends dbDAO {
             $categoryId = $pageableDTO->getCategoryId();
             $priceStart = $pageableDTO->getPriceStart();
             $priceEnd = $pageableDTO->getPriceEnd();
-            $sql .= " WHERE skus.in_stock != 0";
+            // $sql .= " WHERE skus.in_stock != 0";
             if($categoryId != null) {
                 $sql .= " AND sp.id_danh_muc = ?";
                 $type .= "i";
