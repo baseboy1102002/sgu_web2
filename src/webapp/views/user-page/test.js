@@ -512,7 +512,7 @@ function renderCart(){
                     <div class="order-right-price">${money.format(price)}</div>
                     <div class="order-right-quantity">
                         <div class="quantity-details">`
-                if(item.in_stock !==0)
+                if(item.in_stock !==0 && item.so_luong!==0)
                     str+=`
                             <span>${item.quantity}</span>
                             <div class="quantity-navigation">
@@ -554,6 +554,7 @@ function renderCart(){
             btnContainer.style.display = "flex";
             btnContainer.innerHTML =`
             <button type="button" id="btn_back_to_shop" class="btn btn-outline-dark" style="margin-right:24px"><i class="fa-solid fa-arrow-left"></i> Tiếp tục mua hàng</button>
+            <button type="button" id="refresh-cart-btn"class="btn btn-outline-primary" style="margin-right:24px">refresh</button>
             <button type="button" class="update-cart-btn btn btn-outline-primary" style="margin-right:24px">Cập nhật</button>
             <button type="button" class="pay-cart-btn btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#payment-infor-modal">Thanh toán</button>
             `;
@@ -570,6 +571,10 @@ function renderCart(){
             $('.grid_row.cart-section').html("");
             $('.grid_row.shop-section').removeClass("hide");
         });
+        $('#refresh-cart-btn').click(function(e){
+            e.preventDefault()
+            renderCart()
+        })
     });
         
 }
@@ -618,6 +623,15 @@ function updateCart(){
             };
             cart_item_list.push(cart_item);
         });
+        let outOfOrder=cart_item_list.find((item)=>{return item.quantity=="Đã hết hàng !!!"})
+        if(outOfOrder!=null)
+            toast({
+                title: "Thông báo!",
+                message: "Vui lòng xóa hết những sản phẩm đã hết hàng trước khi cập nhật",
+                type: "info",
+                duration: 4000
+            });
+        else
         $.ajax({
             type: "PUT",
             url: `../../../main/controller/api/cartAPI.php?cartView=${id_gio_hang}`,
@@ -714,7 +728,7 @@ function payCart(){
                     <td scope="col" class="col-sm-2"><img src="${imgFolder}${element.img_path}" alt="" class="img-fluid"></td>
                     <td scope="col" class="col-sm-4">${element.ten_sp}</td>
                     `
-                if(element.in_stock==1){
+                if(element.in_stock==1&&element.so_luong!==0){
                     str+=   ` <td scope="col" class="col-sm-2">${money.format(element.don_gia)}</td>
                         <td scope="col" class="col-sm-1">${element.quantity}</td>
                         <td scope="col" class="col-sm-2">${money.format(element.don_gia*element.quantity)}</td>

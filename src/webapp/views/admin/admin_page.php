@@ -614,7 +614,7 @@
                     </div>
                 </div>
 
-                <div class="tabs report_tab report tab_hide">
+                <div class="tabs report_tab report">
                     <div class="report_tab_heading">
                         <h2>THỐNG KÊ KINH DOANH</h2>
                         <hr>

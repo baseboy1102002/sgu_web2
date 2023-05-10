@@ -5,7 +5,7 @@
 class cartDetailDAO extends dbDAO{
 
     public function getAllByCartId($id){
-        $sql="SELECT ct.id_sku,CONCAT(sp.ten_sp, ' ' ,skus.sku_name) as ten_sp,sp.img_path, skus.don_gia,ct.quantity,skus.in_stock FROM chi_tiet_gio_hang as ct 
+        $sql="SELECT ct.id_sku,CONCAT(sp.ten_sp, ' ' ,skus.sku_name) as ten_sp,sp.img_path, skus.don_gia,ct.quantity,skus.in_stock,skus.so_luong FROM chi_tiet_gio_hang as ct 
         INNER JOIN skus ON ct.id_sku=skus.id
         INNER JOIN san_pham as sp ON skus.id_sp=sp.id
         WHERE ct.id_gio_hang=?";
