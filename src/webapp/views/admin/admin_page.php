@@ -228,11 +228,11 @@
                                     <form id="category-delete-form">
                                         <div class="form-group">
                                             <label for="category_id">Mã danh mục</label>
-                                            <input class="form-input category_delete_id" type="text" id="category_id" readonly>
+                                            <input class="form-control form-input category_delete_id" type="text" id="category_id" readonly>
                                         </div>
                                         <div class="form-group">
                                             <label for="category_name">Tên danh mục</label>
-                                            <input class="form-input category_delete_name" type="text" id="category_name" readonly>
+                                            <input class="form-control form-input category_delete_name" type="text" id="category_name" readonly>
                                         </div>
                                             <button type="submit" class="btn btn-success category_confirm_delete_btn" id="category_confirm_btn">Xác nhận</button>
                                             <button type="button" class="btn btn-danger" data-dismiss="modal" id="category_cancel_btn">Hủy</button>

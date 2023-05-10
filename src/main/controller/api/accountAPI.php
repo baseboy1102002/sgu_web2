@@ -89,6 +89,14 @@ class accountAPI{
             header('HTTP/1.0 500 Internal Server Error');
         }
     }
+    public function checkExistUsername($username){
+        $result=$this->accountService->findByUserName($username)->fetch_array()[0];
+        if($result>0){
+            header('Content-Type: application/json');
+            echo json_encode("Yes");
+        }
+        else header('HTTP/1.0 404 Not Found');
+    }
 
     public function findByUserNameAndPassword() {
         $data = json_decode(file_get_contents('php://input'), true);
@@ -142,6 +150,9 @@ switch ($method) {
         if (!empty($_GET['id'])) {
             $id = intval($_GET['id']);
             $accountAPI->getAccountById($id);
+        }else if(isset($_GET['action']) && strcmp($_GET['action'], "check")==0){
+            $username = $_GET['username'];
+            $accountAPI->checkExistUsername($username);
         }
         else{
             $accountAPI->getAllAccounts();

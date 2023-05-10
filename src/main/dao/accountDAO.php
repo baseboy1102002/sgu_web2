@@ -19,6 +19,11 @@
             $result = $this->read($sql);
             return $result;
         }
+        public function findByUserName($username)
+        {
+            $sql="SELECT count(id) as dem FROM tai_khoan WHERE ten_tk = ? AND status!=0";
+            return $this->read($sql,"s",$username);
+        }
 
         public function save($accountDTO) {
             $sql = "INSERT INTO tai_khoan (ten_tk, password, email, id_nhom_quyen, status) VALUES (?,?,?,?,?)";

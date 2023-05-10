@@ -51,8 +51,8 @@ $("#form-1, #form-2").submit(function (e) {
     const checkLogin2 = PasswordLoginValid()
 
     if($("#sign-up").hasClass("active")) {
-        // sign up
-        if(check1&&check2&&check3&&check4) {
+        const username = $("#username").val();
+        if(check1&&check2&&check3&&check4&&!isExistUsername(username)) {
             e.preventDefault()
             let data = {}
             let formData = $("#form-1").serializeArray()
@@ -118,6 +118,25 @@ $("#form-1, #form-2").submit(function (e) {
             e.preventDefault()
     }
 });
+
+function isExistUsername(username){
+    return $.ajax({
+        type: "GET",
+        url: `../../../main/controller/api/accountAPI.php?action=check`,
+        data: `username=${username}`,
+        async:false,
+        dataType: "json",
+        success: function (response) {
+            toast({
+                title: "Thất bại!",
+                message: "Tài khoản đã tồn tại",
+                type: "error",
+                duration: 4000
+            });
+        }
+    }).responseText;
+}
+
 
 $("#sign-up").click(function () { 
     $("#form-1").removeClass("hide_form");

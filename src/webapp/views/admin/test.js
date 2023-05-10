@@ -1688,6 +1688,16 @@ function loadCategories(){
 
 $("#category_form").submit(function (e) {
     e.preventDefault()
+    const active_feature = $('.sidebar_menu-items.active').data('id-chuc-nang');
+    if(permission[active_feature]['is_update']==0){
+        toast({
+            title: "Hạn chế",
+            message: "Bạn không có quyền hạn để sử dụng hành động này",
+            type: "warning",
+            duration: 2000
+        });
+        return false
+    } 
     const regex = /[!@#$%^&*,.?":{}|<>]/gm;
     if($("#category_name").val().length==0){
         $('#category_name').next().text('Tên sản phẩm không được bỏ trống');
@@ -1759,14 +1769,35 @@ function loadCategoryDetail(category_id) {
 }
 $('#category_add_btn').click(function (e) { 
     e.preventDefault();
-    $('#category_name').val('');
-    $('.modal-title-category').text('Thêm biến thể')
-    $('#category_id').text('auto')
-    $('#category_modal').attr('data-action', 'add');
+    const active_feature = $('.sidebar_menu-items.active').data('id-chuc-nang')
+    if(permission[active_feature]['is_insert']==1) {
+        $('#category_name').val('');
+        $('.modal-title-category').text('Thêm biến thể')
+        $('#category_id').text('auto')
+        $('#category_modal').attr('data-action', 'add');
+    } else {
+        toast({
+            title: "Hạn chế",
+            message: "Bạn không có quyền hạn để sử dụng hành động này",
+            type: "warning",
+            duration: 2000
+        });
+    }
+    
 });
 
 $('#category-delete-form').submit(function (e) { 
     e.preventDefault();
+    const active_feature = $('.sidebar_menu-items.active').data('id-chuc-nang');
+    if(permission[active_feature]['is_delete']==0){
+        toast({
+            title: "Hạn chế",
+            message: "Bạn không có quyền hạn để sử dụng hành động này",
+            type: "warning",
+            duration: 2000
+        });
+        return false
+    } 
     const category_id = $(this).closest('form').find('.category_delete_id').val()
     $.ajax({
         type: "DELETE",
@@ -1865,6 +1896,16 @@ function loadAccounts(accounts){
 }
 $("#account_delete_form").submit(function(e){
     e.preventDefault()
+    const active_feature = $('.sidebar_menu-items.active').data('id-chuc-nang');
+    if(permission[active_feature]['is_delete']==0){
+        toast({
+            title: "Hạn chế",
+            message: "Bạn không có quyền hạn để sử dụng hành động này",
+            type: "warning",
+            duration: 2000
+        });
+        return false
+    } 
     let account_Id=$('#account_delete_id').val()
     $.ajax({
         type: "DELETE",
@@ -1895,10 +1936,21 @@ $("#account_delete_form").submit(function(e){
 
 $('#account_add_btn').click(function (e) { 
     e.preventDefault();
-    $(".modal-title-account").text("Thêm tài khoản");
-    clearAccountForm();
-    $('#account_modal').attr('data-action', 'add');
-    getAllRoles(null);
+    const active_feature = $('.sidebar_menu-items.active').data('id-chuc-nang')
+    if(permission[active_feature]['is_insert']==1) {
+        $(".modal-title-account").text("Thêm tài khoản");
+        clearAccountForm();
+        $('#account_modal').attr('data-action', 'add');
+        getAllRoles(null);
+    } else {
+        toast({
+            title: "Hạn chế",
+            message: "Bạn không có quyền hạn để sử dụng hành động này",
+            type: "warning",
+            duration: 2000
+        });
+    }
+
 })
 function loadAccountDetail(account_id) {
     $.ajax({
@@ -1938,6 +1990,16 @@ function getAllRoles(selected_value){
 }
 $(".account_modal_form").submit(function (e) {
     e.preventDefault()
+    const active_feature = $('.sidebar_menu-items.active').data('id-chuc-nang');
+    if(permission[active_feature]['is_update']==0){
+        toast({
+            title: "Hạn chế",
+            message: "Bạn không có quyền hạn để sử dụng hành động này",
+            type: "warning",
+            duration: 2000
+        });
+        return false
+    } 
     console.log($(this))
     if(validateAccountForm()){
         let data = {}
@@ -2109,6 +2171,7 @@ $("#orderNote_date-btn").click(function (e) {
     }
 });
 function loadOrderDetail(order_id){
+    $("#orderDetail-btn").remove()
     $.ajax({
         type: "GET",
         url: "../../../main/controller/api/orderAPI.php",
@@ -2124,10 +2187,12 @@ function loadOrderDetail(order_id){
             let check = parseInt(response.status);
             console.log(check);
             if(check!=1){
+                $("#orderDetail-btn").html()
                 $("#order_status").prop('checked',false);
                 const btns = document.createElement("div");
                 btns.style.margin="5px 0px";
                 btns.classList.add("col-md-3","checked-btn");
+                btns.id="orderDetail-btn"
                 btns.innerHTML=`
                 <div class="form-btns" style="float:right">
                     <button type="submit" class="btn btn-success" id="account_confirm_btn">Xác nhận</button>
@@ -2167,6 +2232,16 @@ function loadOrderDetail(order_id){
 
 $(".order_form").submit(function (e) { 
     e.preventDefault();
+    const active_feature = $('.sidebar_menu-items.active').data('id-chuc-nang');
+    if(permission[active_feature]['is_update']==0){
+        toast({
+            title: "Hạn chế",
+            message: "Bạn không có quyền hạn để sử dụng hành động này",
+            type: "warning",
+            duration: 2000
+        });
+        return false
+    } 
     $.ajax({
         type: "PUT",
         url: `../../../main/controller/api/orderAPI.php?id=${$("#order_id").val()}`,

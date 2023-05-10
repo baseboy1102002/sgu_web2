@@ -23,6 +23,9 @@ class accountService {
         $result = $this->accountDAO->findAll();
         return $result;
     }
+    public function findByUserName($username){
+        return $this->accountDAO->findByUserName($username);
+    }
 
     // return type: Int (id product)
     public function save($accountDTO) {
