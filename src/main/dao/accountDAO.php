@@ -15,7 +15,7 @@
         }
         //code cua Chinh
         public function findAll() {
-            $sql = "SELECT tk.*,nq.ten_nhom_quyen FROM tai_khoan as tk INNER JOIN nhom_quyen as nq ON tk.id_nhom_quyen=nq.id WHERE is_deleted !=1 AND tk.id_nhom_quyen !=2 ";
+            $sql = "SELECT tk.*,nq.ten_nhom_quyen FROM tai_khoan as tk INNER JOIN nhom_quyen as nq ON tk.id_nhom_quyen=nq.id WHERE is_deleted !=1";
             $result = $this->read($sql);
             return $result;
         }

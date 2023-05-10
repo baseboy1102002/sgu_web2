@@ -1810,11 +1810,25 @@ function loadAccounts(accounts){
                 <td>${item.ten_tk}</td>
                 <td>${item.email}</td>
                 <td>${item.ten_nhom_quyen}</td>
-                <td>
+                `
+        if(item.id_nhom_quyen!=2)
+        str+=`        <td>
                     <button type="button" class="btn btn-danger account_delete_btn">
                         <i class="fa-solid fa-trash"></i>
                     </button>
                     <button type="button" class="btn btn-success account_update_btn">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                    </button>
+                    
+                </td>
+            </tr>
+        `
+        else 
+        str+=`        <td>
+                    <button type="button" class="btn btn-danger account_delete_btn" disabled>
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                    <button type="button" class="btn btn-success account_update_btn" disabled>
                         <i class="fa-solid fa-pen-to-square"></i>
                     </button>
                     
