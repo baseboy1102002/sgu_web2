@@ -717,7 +717,9 @@ function removeFromCart(){
     });
 }
 function payCart(){
-    $(".pay-cart-btn").click(function (e) { 
+    
+    $(".pay-cart-btn").click(function (e) {
+        renderCart() 
         $.get(`../../../main/controller/api/cartAPI.php?cartView=${id_gio_hang}`,function(response){
             $("#payment-check").children("tbody").html("");
             $(response).each(function (index, element) {

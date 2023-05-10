@@ -30,7 +30,6 @@ class accountAPI{
         if ($result->num_rows > 0) {
             $rows = array();
             while ($row = $result->fetch_assoc()) {
-                $row += $this->accountService->findRoleByUserId($row['id_nhom_quyen'])->fetch_assoc();
                 $rows[] = $row;
             }
             header('Content-Type: application/json');
