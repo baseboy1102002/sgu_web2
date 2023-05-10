@@ -30,6 +30,7 @@ class accountAPI{
         if ($result->num_rows > 0) {
             $rows = array();
             while ($row = $result->fetch_assoc()) {
+                $row += $this->accountService->findRoleByUserId($row['id_nhom_quyen'])->fetch_assoc();
                 $rows[] = $row;
             }
             header('Content-Type: application/json');
@@ -62,17 +63,18 @@ class accountAPI{
     public function updateAccount($id) {
         $data = json_decode(file_get_contents('php://input'), true);
         $accountDTO = new accountDTO();
-        $accountDTO->setId($data['id_danh_muc']);
+        $accountDTO->setId($id);
         $accountDTO->setTen_tk($data['username']);
         $accountDTO->setPassword($data['password']);
-        $accountDTO->setIdNhomquyen($data['id_nhom_quyen']);
+        $accountDTO->setEmail($data['email']);
+        $accountDTO->setIdNhomquyen(intval($data['id_nhom_quyen']));
         $accountDTO->setStatus($data['status']);
         $result = $this->accountService->updateAccount($accountDTO);
 
         if ($result) {
-            header('HTTP/1.0 204 No Content');
+            header('HTTP/1.0 201 Created');
             header('Content-Type: application/json');
-            // echo json_encode($result);
+            echo json_encode($result);
         } else {
             header('HTTP/1.0 500 Internal Server Error');
         }
@@ -80,11 +82,10 @@ class accountAPI{
 
     public function deleteAccount($id) {
         $result = $this->accountService->deleteAccount($id);
-
         if ($result) {
-            header('HTTP/1.0 204 No Content');
+            header('HTTP/1.0 201 Created');
             header('Content-Type: application/json');
-            // echo json_encode($result);
+            echo json_encode($result);
         } else {
             header('HTTP/1.0 500 Internal Server Error');
         }

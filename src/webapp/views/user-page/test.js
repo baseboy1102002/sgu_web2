@@ -830,3 +830,101 @@ $("#payment-phone,#payment-name,#payment-address").blur(function (e) {
     if($(e.target).is($("#payment-address")))
         addressValid();
 });
+
+
+// Xem lai don dat hang
+$('#myOrder-btn').each(function(index,item){
+    $(item).click(function (e) { 
+        e.preventDefault();
+        let account_id=$('#logged-in').val()
+        let orderNoteList=getOrderNoteByAccountId(account_id).responseJSON
+        if(orderNoteList == null) {
+            $(".orderNote_body").html (`<span style="margin-top: 30px; display:block">Bạn chưa có đơn hàng nào, hãy mua ngay tại shop chúng tôi!</span>`)
+        }else{
+            orderNoteList.forEach((item) => {
+                let status = item.status==1 ? "Đã xử lý":"Chưa xử lý"
+                let statusStyle = item.status==1 ? "text-success": "text-danger"
+                let orderOverview = document.createElement("div")
+                orderOverview.classList.add("orderNote_overView")
+                orderOverview.innerHTML=`
+                <i class="fa-sharp fa-solid fa-clipboard"></i>
+                <div class="orderNote_info">
+                    <div class="orderNote_id">Mã đơn hàng: ${item.id}</div>
+                    <div class="orderNote_totalPrice">Thành tiền: <span style="color: red;">${money.format(item.tong_tien)}</span></div>
+                </div>
+                <div class="orderNote_date">Ngày tạo: ${item.created_date}</div>
+                <div class="orderNote_statsus">
+                    Tình trạng
+                    <div class="${statusStyle}">${status}</div>
+                </div>
+                <div class="orderNote_viewDetails">
+                    <span>Xem chi tiết</span>
+                    <i class="fa-solid fa-circle-plus"></i>
+                </div>
+            `
+            let orderNoteDetailList=getOrderNoteDetailByOrderId(item.id).responseJSON
+            if(orderNoteDetailList!=null){
+                const orderDetail = document.createElement("div")
+                orderDetail.classList.add("orderNote_details","hidden")
+                orderDetail.style.display="none";
+                let str="";
+                orderNoteDetailList.forEach((item) => {
+                str += `
+                    <div class="orderNote_items">
+                        <div class="orderNote_productName">${item.ten_sp}</div>
+                        <div class="orderNote_productPrice">Đơn giá: <span style="color: red;">${money.format(item.don_gia)}</span></div>
+                        <div class="orderNote_productQuantity">SL: ${item.so_luong}</div>
+                    </div>
+                `
+            })
+                orderDetail.innerHTML=str
+            $(".orderNote_body").append(orderOverview,orderDetail)
+            }
+        })
+        $(".orderNote_body").find($(".orderNote_viewDetails")).each(function(index,item) {
+            $(item).click(function(e){ 
+                const orderDetail=$(item).parent().next();
+                if(orderDetail.hasClass("hidden")) {
+                    item.innerHTML = `
+                        <span>Ẩn bớt</span>
+                        <i class="fa-solid fa-minus"></i>
+                    `
+                    orderDetail.removeClass("hidden")
+                }
+                else {
+                    item.innerHTML = `
+                        <span>Xem chi tiết</span>
+                        <i class="fa-solid fa-circle-plus"></i>
+                    `
+                    orderDetail.addClass("hidden")
+                }
+                
+                orderDetail.toggle()
+            })
+            })
+        }
+    })
+});
+
+function getOrderNoteByAccountId(id){
+    return $.ajax({
+        type: "GET",
+        url: `../../../main/controller/api/orderAPI.php?action=order&account_id=${id}`,
+        dataType: "json",
+        async: false,
+        error: function(jqXHR, exception) {
+        }
+    });
+
+}
+function getOrderNoteDetailByOrderId(id){
+    return $.ajax({
+        type: "GET",
+        url: `../../../main/controller/api/orderAPI.php?action=orderDetail&id=${id}`,
+        dataType: "json",
+        async: false,
+        error: function(jqXHR, exception) {
+            
+        }
+    });
+}

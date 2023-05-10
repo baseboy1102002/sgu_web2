@@ -13,13 +13,16 @@ let product_pageable = {
     categoryId: null,
     keyword: null
 }
-
+let filter="";
+let money = Intl.NumberFormat('vi-VN', {
+    style: 'currency',
+    currency: 'VND'
+});
 let permission = {}
-
 function loadTab(tab_id) {
     switch (tab_id) {
         case 'category':
-            
+            loadCategories();
             break;
         case 'product':
             // product tabs
@@ -41,13 +44,26 @@ function loadTab(tab_id) {
             });
             break;
         case 'ordernote':
-            
+            getOrder(filter);
             break;
         case 'account':
-            
+            $.ajax({
+                type: "GET",
+                url: "../../../main/controller/api/accountAPI.php",
+                success: function (response) {
+                    loadAccounts(response);
+                }
+            });
             break;
         case 'report':
-            
+                let categories = getCategories().responseJSON;
+                let str=`<option value='all'>Tất cả</option>`;
+                categories.forEach((item) => {
+                    str += `
+                    "<option value='${item.id}'>${item.ten_danh_muc}</option>";
+                    `
+                })
+                $("#report_filter_category").html(str);
             break;
         case 'attribute':
             $.ajax({
@@ -1595,3 +1611,606 @@ function logout() {
         });
     });
 }
+
+function getCategories(){
+
+    return $.ajax({
+        type: "GET",
+        url: "../../../main/controller/api/categoryAPI.php",
+        dataType:'json',
+        async: false,
+        error: function(jqXHR, exception) {
+            toast({
+                title: "Thất bại!",
+                message: "Đã có lỗi xảy ra ("+ exception +")",
+                type: "erorr",
+                duration: 4000
+            });
+        }
+    })
+}
+
+function loadCategories(){
+    let categories = getCategories().responseJSON;
+
+    if($.isEmptyObject(categories)) {
+        $(".category_list").html("<h2>Không tìm thấy danh mục!</h2>");    
+        return
+    }
+    $(".category_list").html("")
+    let str = ""
+    const imgFolder = '../../../uploads/'
+    categories.forEach((item) => {
+        str += `
+            <tr data-category-id="${item.id}">
+                <td>${item.id}</td>
+                <td>${item.ten_danh_muc}</td>
+                <td>
+                    <button type="button" class="btn btn-danger category_delete_btn">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                    <button type="button" class="btn btn-success category_update_btn">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                    </button>
+                    
+                </td>
+            </tr>
+        `
+    })
+    $(".category_list").html(str);
+
+    $(".category_update_btn").each(function (index, element) {
+        $(element).click(function (e) { 
+            e.preventDefault()
+            const category_id = $(element).closest('tr').data('category-id')
+            // const img_path_value = $(element).closest('tr').find('.img_path').val()
+            $('.modal-title-category').text('Sửa sản phẩm')
+            loadCategoryDetail(category_id)
+            $('#category_modal').attr('data-action', 'update');
+            $('#category_modal').modal('show')
+        });
+        
+    });
+    
+    $('.category_delete_btn').each(function (index, element) {
+        $(element).click(function (e) { 
+            e.preventDefault();
+            const category_id = $(element).closest('tr').data('category-id')
+            const category_name = $(element).closest('tr').children(':nth-child(2)').text()
+            $('.category_delete_id').val(category_id)
+            $('.category_delete_name').val(category_name)
+            $('#category_delete_modal').modal('show')
+            console.log($('#category-delete-form'))
+        });
+        
+    });
+}
+
+$("#category_form").submit(function (e) {
+    e.preventDefault()
+    const regex = /[!@#$%^&*,.?":{}|<>]/gm;
+    if($("#category_name").val().length==0){
+        $('#category_name').next().text('Tên sản phẩm không được bỏ trống');
+        return false;
+    }
+    if (regex.test($("#category_name").val())) {
+        $('#category_name').next().text('Tên sản phẩm không chứa kí tự đặc biệt')
+        return false;
+    }
+    let formData = new FormData();
+    $.each($(this).serializeArray(), function (i, e) { 
+            formData.append(e.name, e.value)
+    });
+    formData.append('in_stock', 1)
+    let category_Id, url, message
+
+    switch ($('#category_modal').attr('data-action')) {
+        case 'add':
+            url = "../../../main/controller/api/categoryAPI.php"
+            message = "Tạo danh mục thành công"
+            break
+        case 'update':
+            category_Id = $('#category_id').text()
+            url = `../../../main/controller/api/categoryAPI.php?id=${category_Id}`
+            message = "Cập nhật danh mục thành công"
+            break
+        default:
+            break
+    }
+    $.ajax({
+        type: "POST",
+        url: url,
+        data: formData,
+        processData: false,
+        contentType: false,
+        dataType: "json",
+        success: function (response) {
+            loadTab('category')
+            $('#category_modal').modal('hide')
+            toast({
+                title: "Thành công!",
+                message: message,
+                type: "success",
+                duration: 4000
+            });
+        }, error: function(jqXHR, exception) {
+            $('#product_modal').modal('hide')
+            toast({
+                title: "Thất bại!",
+                message: "Đã có lỗi xảy ra ("+ exception +")",
+                type: "erorr",
+                duration: 4000
+            });
+        }
+    });
+});
+function loadCategoryDetail(category_id) {
+    $.ajax({
+        type: "GET",
+        url: "../../../main/controller/api/categoryAPI.php",
+        data: `id=${category_id}`,
+        dataType: "json",
+        success: function (response) {
+            $("#category_name").val(response.ten_danh_muc);
+        }
+    });
+    $('#category_id').text(category_id)
+
+}
+$('#category_add_btn').click(function (e) { 
+    e.preventDefault();
+    $('#category_name').val('');
+    $('.modal-title-category').text('Thêm biến thể')
+    $('#category_id').text('auto')
+    $('#category_modal').attr('data-action', 'add');
+});
+
+$('#category-delete-form').submit(function (e) { 
+    e.preventDefault();
+    const category_id = $(this).closest('form').find('.category_delete_id').val()
+    $.ajax({
+        type: "DELETE",
+        url: `../../../main/controller/api/categoryAPI.php?id=${category_id}`,
+        dataType: "json",
+        success: function (response) {
+            loadTab('category')
+            $('#category_delete_modal').modal('hide')
+            toast({
+                title: "Thành công!",
+                message: "Đã xóa sản phẩm",
+                type: "success",
+                duration: 4000
+            });
+        }, error: function(jqXHR, exception) {
+            $('#category_delete_modal').modal('hide')
+            toast({
+                title: "Thất bại!",
+                message: "Đã có lỗi xảy ra ("+ exception +")",
+                type: "error",
+                duration: 4000
+            });
+        }
+    });
+});
+
+
+
+
+// Account
+function loadAccounts(accounts){
+    if($.isEmptyObject(accounts)) {
+        $(".account_list").html("<h2>Không tìm thấy tài khoản!</h2>");    
+        return
+    }
+    $(".account_list").html("")
+    let str = ""
+    accounts.forEach((item) => {
+        str += `
+            <tr data-account-id="${item.id}">
+                <td>${item.ten_tk}</td>
+                <td>${item.email}</td>
+                <td>${item.ten_nhom_quyen}</td>
+                <td>
+                    <button type="button" class="btn btn-danger account_delete_btn">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                    <button type="button" class="btn btn-success account_update_btn">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                    </button>
+                    
+                </td>
+            </tr>
+        `
+    })
+    $(".account_list").html(str);
+    $(".account_update_btn").each(function (index, element) {
+        $(element).click(function (e) { 
+            e.preventDefault()
+            clearAccountForm();
+            const account_id = $(element).closest('tr').data('account-id')
+            // const img_path_value = $(element).closest('tr').find('.img_path').val()
+            $('.modal-title-account').text('Sửa sản phẩm')
+            loadAccountDetail(account_id);
+            $('#account_modal').attr('data-action', 'update');
+            $('#account_modal').modal('show')
+            
+        });
+        
+    });
+    
+    $('.account_delete_btn').each(function (index, element) {
+        $(element).click(function (e) { 
+            e.preventDefault();
+            const account_id = $(element).closest('tr').data('account-id')
+            const account_name = $(element).closest('tr').children(':nth-child(1)').text()
+            $('#account_delete_id').val(account_id)
+            $('#account_delete_name').val(account_name)
+            $('#account_delete_modal').modal('show')
+        });
+});
+}
+$("#account_delete_form").submit(function(e){
+    e.preventDefault()
+    let account_Id=$('#account_delete_id').val()
+    $.ajax({
+        type: "DELETE",
+        url: `../../../main/controller/api/accountAPI.php?id=${account_Id}`,
+        dataType: "json",
+        contentType: false,
+        success: function (response) {
+            loadTab('account')
+            $('#account_delete_modal').modal('hide')
+            toast({
+                title: "Thành công!",
+                message: "Sản phẩm đã bị xóa",
+                type: "success",
+                duration: 4000
+            });
+        },error: function(jqXHR, exception) {
+            $('#account_delete_modal').modal('hide')
+            toast({
+                title: "Thất bại!",
+                message: "Đã có lỗi xảy ra ("+ exception +")",
+                type: "erorr",
+                duration: 4000
+            });
+        }
+    });
+
+})
+
+$('#account_add_btn').click(function (e) { 
+    e.preventDefault();
+    $(".modal-title-account").text("Thêm tài khoản");
+    clearAccountForm();
+    $('#account_modal').attr('data-action', 'add');
+    getAllRoles(null);
+})
+function loadAccountDetail(account_id) {
+    $.ajax({
+        type: "GET",
+        url: "../../../main/controller/api/accountAPI.php",
+        data: `id=${account_id}`,
+        dataType: "json",
+        contentType: false,
+        success: function (response) {
+            getAllRoles(response.id_nhom_quyen);
+            $("#account_username").val(response.ten_tk);
+            $("#account_email").val(response.email);
+            $("#account_id").val(account_id);
+            $("#account_pass").val(response.password);
+            if(response.status==1)
+            $("#account_status").prop('checked',true);
+            else $("#account_status").prop('checked',false);
+        }
+    });
+    
+}
+
+function getAllRoles(selected_value){
+    let str="";
+    $.get("../../../main/controller/api/permissionAPI.php",
+        function (data, textStatus, jqXHR) {
+            let str="";
+            data.forEach(item=> {
+                str+=`<option value="${item.id}">${item.ten_nhom_quyen}</option>`   
+            })
+            $("#account_type_selection").html(str);
+            if(selected_value!=null)
+                $("#account_type_selection").val(selected_value).change();            
+        },
+
+    );
+}
+$(".account_modal_form").submit(function (e) {
+    e.preventDefault()
+    console.log($(this))
+    if(validateAccountForm()){
+        let data = {}
+        let formData = $(this).serializeArray()
+        $.each(formData, function (i, e) { 
+            data[""+e.name+""] = e.value
+        });
+        if($("#account_status").prop('checked'))
+        data["status"] = 1
+        else data["status"] = 0
+    let account_Id, url, message,request
+
+    switch ($('#account_modal').attr('data-action')) {
+        case 'add':
+            request="POST"
+            url = "../../../main/controller/api/accountAPI.php?action=create"
+            message = "Tạo tài khoản thành công"
+            break
+        case 'update':
+            request="PUT"
+            account_Id = $("#account_id").val()
+            url = `../../../main/controller/api/accountAPI.php?id=${account_Id}`
+            message = "Cập nhật tài khoản thành công"
+            break
+        default:
+            break
+    }
+    $.ajax({
+        type: request,
+        url: url,
+        data: JSON.stringify(data),
+        processData: false,
+        contentType: false,
+        dataType: "json",
+        success: function (response) {
+            loadTab('account')
+            $('#account_modal').modal('hide')
+            toast({
+                title: "Thành công!",
+                message: message,
+                type: "success",
+                duration: 4000
+            });
+        }, error: function(jqXHR, exception) {
+            $('#account_modal').modal('hide')
+            toast({
+                title: "Thất bại!",
+                message: "Đã có lỗi xảy ra ("+ exception +")",
+                type: "erorr",
+                duration: 4000
+            });
+        }
+    });
+}
+});
+function validateAccountForm(){
+    let flag = true;
+    let username = $("#account_username").val();
+    let email = $("#account_email").val();
+    let pass = $("#account_pass").val();
+    const mailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
+    userNameRegex = /[!@#$%^&*,.?":{}|<>]/gm
+    if(userNameRegex.test(username)){
+        $('label[for="account_id"] span').text("(*) Không nhập ký tự đặc biệt");
+        flag = false;
+    }
+    if(!mailRegex.test(email)){
+        $('label[for="account_email"] span').text("(*) Vui lòng nhập đúng định dạng");
+        flag = false;
+    }
+    if(pass.length<6){
+        $('label[for="account_pass"] span').text("(*) Vui lòng nhập tối thiểu 6 ký tự");
+        flag = false;
+    }
+    return flag;
+}
+function clearAccountForm(){
+    $('label[for="account_id"] span').text("(*)");
+    $('label[for="account_email"] span').text("(*)");
+    $('label[for="account_pass"] span').text("(*)");
+    $("#account_username").val("");
+    $("#account_email").val("");
+    $("#account_pass").val("");
+}
+function getOrder($filter){
+    $.ajax({
+        type: "GET",
+        url: "../../../main/controller/api/orderAPI.php?action=order",
+        data:$filter,
+        dataType:"json",
+        success: function (response) {
+            loadOrder(response)
+
+        }
+    });
+}
+function loadOrder(orders){
+    if($.isEmptyObject(orders)) {
+        $(".orderNote_list_content").html("<h2>Không có đơn hàng nào!</h2>");    
+        return
+    }
+
+    $(".orderNote_list_content").html("")
+    let str = ""
+    orders.forEach((item) => {
+        let status = item.status ==0? "chưa xử lý":"Đã xử lý";
+        if(item.status==1)
+            str+=`<tr class="success" data-order-id="${item.id}">`
+        else str+=`<tr data-order-id="${item.id}">`
+        str += `
+                <td>${item.id}</td>
+                <td>${item.created_date}</td>
+                <td>${status}</td>
+                <td>${money.format(item.tong_tien)}</td>
+                <td>
+                    <button type="button" class="btn btn-success order_update_btn">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                    </button>
+                    
+                </td>
+            </tr>
+        `
+    })
+    $(".orderNote_list_content").html(str);
+    $(".order_update_btn").each(function (index, element) {
+        $(element).click(function (e) { 
+            e.preventDefault()
+            const order_id = $(element).closest('tr').data('order-id')
+            loadOrderDetail(order_id)
+            // const img_path_value = $(element).closest('tr').find('.img_path').val()
+            $('#order_modal').modal('show')
+            
+        });    
+    });
+    
+}
+
+
+$("#orderNote_all-btn").click(function (e) { 
+    e.preventDefault();
+    filter=""
+    getOrder(filter);
+});
+$("#orderNote_date-btn").click(function (e) { 
+    e.preventDefault();
+    if($("#orderNote_date-from").val().length==0 || $("#orderNote_date-to").val().length==0){
+        toast({
+            title: "Thất bại!",
+            message: "Bạn chưa nhập thời gian !!",
+            type: "erorr",
+            duration: 2000
+        });
+    }else {
+        let sDate= new Date($("#orderNote_date-from").val())
+        let eDate= new Date($("#orderNote_date-to").val())
+        if(sDate.valueOf()>eDate.valueOf()){
+            toast({
+                title: "Thất bại!",
+                message: "vui lòng nhập đúng thời gian !!",
+                type: "erorr",
+                duration: 2000
+            });
+        }else{
+            filter={};
+            filter['started_date']=$("#orderNote_date-from").val();
+            filter['ended_date']=$("#orderNote_date-to").val();
+            getOrder(filter);
+        }
+    }
+});
+function loadOrderDetail(order_id){
+    $.ajax({
+        type: "GET",
+        url: "../../../main/controller/api/orderAPI.php",
+        data: `id=${order_id}&action=order`,
+        dataType: "json",
+        success: function (response) {
+            $("#order_id").val(response.id);
+            $("#order_date").val(response.created_date);
+            $("#order_sdt").val(response.sdt);
+            $("#order_received").val(response.ten_nguoi_nhan);
+            $("#order_total").val(money.format(response.tong_tien));
+            $("#order_address").val(response.dia_chi);
+            let check = parseInt(response.status);
+            console.log(check);
+            if(check!=1){
+                $("#order_status").prop('checked',false);
+                const btns = document.createElement("div");
+                btns.style.margin="5px 0px";
+                btns.classList.add("col-md-3","checked-btn");
+                btns.innerHTML=`
+                <div class="form-btns" style="float:right">
+                    <button type="submit" class="btn btn-success" id="account_confirm_btn">Xác nhận</button>
+                    <button class="btn btn-danger" id="account_cancel_btn" data-dismiss="modal">Hủy</button>
+                </div>
+            `
+            $(".order_form").append(btns);
+            }
+            else{
+                $(".checked-btn").remove();
+                $("#order_status").prop('checked',true);
+            }
+        }
+    });
+    $.ajax({
+        type: "GET",
+        url: "../../../main/controller/api/orderAPI.php",
+        data: `id=${order_id}&action=orderDetail`,
+        dataType: "json",
+        success: function (response) {
+            $(".orderNote_list").html("");
+            let str="";
+            response.forEach((item)=> {
+                str+=`
+                <tr>
+                <td>${item.sku_id}</td>
+                <td>${item.ten_sp}</td>
+                <td>${item.don_gia}</td>
+                <td>${item.so_luong}</td>
+                <td>${money.format(item.so_luong*item.don_gia)}</td>
+            </tr>`
+            })
+            $(".orderNote_list").html(str);
+        }
+    });
+}
+
+$(".order_form").submit(function (e) { 
+    e.preventDefault();
+    $.ajax({
+        type: "PUT",
+        url: `../../../main/controller/api/orderAPI.php?id=${$("#order_id").val()}`,
+        success: function (response) {
+            loadOrderDetail($("#order_id").val())
+            getOrder(filter);
+        }
+    });
+});
+
+$("#report_filter_btn").click(function(e) {
+    e.preventDefault()
+    let sDate = $("#report_date_from").val()
+    let eDate = $("#report_date_to").val()
+    if(sDate.length==0 || eDate.length==0){
+        toast({
+            title: "Thất bại!",
+            message: "Bạn chưa nhập thời gian !!",
+            type: "erorr",
+            duration: 2000
+        });
+    }
+    else{
+        let category_id = $("#report_filter_category").val();
+        let title =$("#report_filter_title").val();
+        let sort = $("input[type='radio'][name='report_filter_sort']:checked").val();
+        $.ajax({
+            type: "GET",
+            url: "../../../main/controller/api/orderAPI.php?action=statistic",
+            data: `started_date=${sDate}&ended_date=${eDate}&category_id=${category_id}&title=${title}&sort=${sort}`,
+            dataType: "json",
+            success: function (response) {
+                response.forEach((item) => {
+                    $(".report_list").html("");
+            let str="";
+            let totalIncome=0
+            let totalQuantity=0
+            response.forEach((item)=> {
+                totalIncome += parseFloat(item.doanh_thu)
+                totalQuantity += parseInt(item.so_luong)
+                str+=`
+                <tr>
+                <td colspan="2">${item.ten_sp}</td>
+                <td>${item.so_luong}</td>
+                <td>${money.format(item.doanh_thu)}</td>
+            </tr>`
+            });
+            console.log($("#report_total_quantity"))
+            $("#report_total_quantity").val(totalQuantity)
+            $("#report_total_income").val(money.format(totalIncome))
+            $(".report_list").html(str);
+                })
+            },
+            error: function (){
+                $("#report_total_quantity").val(0)
+                $("#report_total_income").val(money.format(0))
+                $(".report_list").html("<h2>Không có số liệu thống kê</h2>");
+            }
+        });
+    }
+})

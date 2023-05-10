@@ -14,8 +14,14 @@ class orderService{
     public function findById($id){
         return $this->orderDAO->findById($id);
     }
+    public function findByAccountId($id){
+        return $this->orderDAO->findByAccountId($id);
+    }
     public function findAll(){
         return $this->orderDAO->findAll();
+    }
+    public function findAllByDate($sDate, $eDate){
+        return $this->orderDAO->findAllByDate($sDate, $eDate);
     }
     public function createOrder($orderDTO){
         return $this->orderDAO->createOrder($orderDTO);
@@ -23,8 +29,18 @@ class orderService{
     public function onStatus($id){
         return $this->orderDAO->OnStatus($id);
     }
+
+
+// orderDetail
+
+    public function findDetailByOrderId($id){
+        return $this->orderDetailDAO->findByOrderId($id);
+    }
     public function createOrderDetail($orderDetailDTO){
         return $this->orderDetailDAO->createOrderDetail($orderDetailDTO);
+    }
+    public function countProductSold($filter){
+        return $this->orderDetailDAO->countProductSold($filter);
     }
 
 }

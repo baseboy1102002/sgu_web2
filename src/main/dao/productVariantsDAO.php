@@ -150,7 +150,7 @@ class productVariantsDAO extends dbDAO {
     }
 
     function delete_ProductVariantAttr_ByCategoryId($categoryId) {
-        $sql = "DELETE FROM ct_tt_bien_the_sp as btsp JOIN san_pham as sp ON btsp.id_sp = sp.id JOIN danh_muc as dm ON sp.id_danh_muc = dm.id WHERE dm.id = ?";
+        $sql = "DELETE btsp FROM ct_tt_bien_the_sp btsp JOIN san_pham as sp ON btsp.id_sp = sp.id JOIN danh_muc as dm ON sp.id_danh_muc = dm.id WHERE dm.id = ?";
         return $this->update($sql, "i", $categoryId);
     }
     

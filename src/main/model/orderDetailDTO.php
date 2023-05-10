@@ -3,13 +3,15 @@ class orderDetailDTO{
     private $id_donhang;
     private $sku_id;
     private $so_luong;
+    private $don_gia;
 
 
-    function __construct($id_donhang,$sku_id,$so_luong)
+    function __construct($id_donhang,$sku_id,$so_luong,$don_gia)
     {
         $this->id_donhang = $id_donhang;
         $this->sku_id = $sku_id;
         $this->so_luong= $so_luong; 
+        $this->don_gia=$don_gia;
     }
 
     public function setId_donhang($id_donhang){
@@ -29,6 +31,12 @@ class orderDetailDTO{
     }
     public function getSo_luong(){
         return $this->so_luong;
+    }
+    public function setDon_gia($don_gia){
+        $this->don_gia= $don_gia;
+    }
+    public function getDon_gia(){
+        return $this->don_gia;
     }
 }
 

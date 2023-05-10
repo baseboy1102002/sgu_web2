@@ -96,7 +96,7 @@
                                         <i class="fa-solid fa-chevron-down"></i>
                                         <div class="account_pc-selection">
                                             <ul class="account_pc-list">
-                                                <li class="account_pc-option myOrder_ist">
+                                                <li class="account_pc-option" id="myOrder-btn" role="button" href="modal" data-bs-toggle="modal" data-bs-target="#orderNote_modal">
                                                     <i class = "fas fa-file-alt"></i>
                                                     <span> Đơn hàng của tôi</span>
                                                 </li>';
@@ -437,16 +437,14 @@
 
         
         <!-- review order notes modal -->
-        <div class="orderNote_modal orderNote_modal-hide">
-            <div class="orderNote_container">
-                <div class="orderNote_closeBtn">
-                    <i class="fa-solid fa-xmark"></i>
+        <div class="modal fade"id="orderNote_modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-xl">
+                <div class="modal-content orderNote_container">
+                <div class="modal-header orderNote_header">
+                    <h4 class="modal-title text-white">Đơn hàng của tôi</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="orderNote_header">
-                    <h3>Đơn hàng của tôi</h3>
-                </div>
-                <div class="orderNote_body">
-                    <!-- render orderNoteList -->
+                <div class="orderNote_body modal-body">
                 </div>
             </div>
         </div>

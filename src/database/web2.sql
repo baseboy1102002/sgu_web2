@@ -2,10 +2,10 @@
 -- version 5.2.0
 -- https://www.phpmyadmin.net/
 --
--- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th5 09, 2023 lúc 11:17 PM
--- Phiên bản máy phục vụ: 10.4.25-MariaDB
--- Phiên bản PHP: 8.1.10
+-- Host: 127.0.0.1
+-- Generation Time: May 10, 2023 at 05:55 AM
+-- Server version: 10.4.24-MariaDB
+-- PHP Version: 7.4.29
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,44 +18,45 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Cơ sở dữ liệu: `web2`
+-- Database: `web2`
 --
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `chi_tiet_don_hang`
+-- Table structure for table `chi_tiet_don_hang`
 --
 
 CREATE TABLE `chi_tiet_don_hang` (
   `id_donhang` int(5) NOT NULL,
   `sku_id` int(5) NOT NULL,
-  `so_luong` int(11) NOT NULL
+  `so_luong` int(11) NOT NULL,
+  `don_gia` double NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Đang đổ dữ liệu cho bảng `chi_tiet_don_hang`
+-- Dumping data for table `chi_tiet_don_hang`
 --
 
-INSERT INTO `chi_tiet_don_hang` (`id_donhang`, `sku_id`, `so_luong`) VALUES
-(1, 10, 1),
-(4, 10, 1),
-(5, 9, 1),
-(6, 8, 1),
-(6, 9, 1),
-(7, 8, 1),
-(7, 9, 1),
-(8, 8, 1),
-(8, 9, 1),
-(9, 8, 1),
-(9, 9, 1),
-(10, 8, 1),
-(10, 9, 1);
+REPLACE INTO `chi_tiet_don_hang` (`id_donhang`, `sku_id`, `so_luong`, `don_gia`) VALUES
+(1, 10, 1, 0),
+(4, 10, 1, 0),
+(5, 9, 1, 0),
+(6, 8, 1, 0),
+(6, 9, 1, 0),
+(7, 8, 1, 0),
+(7, 9, 1, 0),
+(8, 8, 1, 0),
+(8, 9, 1, 0),
+(9, 8, 1, 0),
+(9, 9, 1, 0),
+(10, 8, 1, 0),
+(10, 9, 1, 0);
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `chi_tiet_gio_hang`
+-- Table structure for table `chi_tiet_gio_hang`
 --
 
 CREATE TABLE `chi_tiet_gio_hang` (
@@ -65,10 +66,10 @@ CREATE TABLE `chi_tiet_gio_hang` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Đang đổ dữ liệu cho bảng `chi_tiet_gio_hang`
+-- Dumping data for table `chi_tiet_gio_hang`
 --
 
-INSERT INTO `chi_tiet_gio_hang` (`id_gio_hang`, `id_sku`, `quantity`) VALUES
+REPLACE INTO `chi_tiet_gio_hang` (`id_gio_hang`, `id_sku`, `quantity`) VALUES
 (4, 2, 1),
 (4, 3, 1),
 (4, 8, 1),
@@ -77,7 +78,7 @@ INSERT INTO `chi_tiet_gio_hang` (`id_gio_hang`, `id_sku`, `quantity`) VALUES
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `chi_tiet_phieu_nhap`
+-- Table structure for table `chi_tiet_phieu_nhap`
 --
 
 CREATE TABLE `chi_tiet_phieu_nhap` (
@@ -90,7 +91,7 @@ CREATE TABLE `chi_tiet_phieu_nhap` (
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `chi_tiet_quyen`
+-- Table structure for table `chi_tiet_quyen`
 --
 
 CREATE TABLE `chi_tiet_quyen` (
@@ -103,10 +104,10 @@ CREATE TABLE `chi_tiet_quyen` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Đang đổ dữ liệu cho bảng `chi_tiet_quyen`
+-- Dumping data for table `chi_tiet_quyen`
 --
 
-INSERT INTO `chi_tiet_quyen` (`id_nhom_quyen`, `id_chuc_nang`, `is_insert`, `is_update`, `is_delete`, `is_read`) VALUES
+REPLACE INTO `chi_tiet_quyen` (`id_nhom_quyen`, `id_chuc_nang`, `is_insert`, `is_update`, `is_delete`, `is_read`) VALUES
 (2, 1, 1, 1, 1, 1),
 (2, 2, 1, 1, 1, 1),
 (2, 3, 1, 1, 1, 1),
@@ -120,19 +121,12 @@ INSERT INTO `chi_tiet_quyen` (`id_nhom_quyen`, `id_chuc_nang`, `is_insert`, `is_
 (3, 4, 0, 0, 0, 0),
 (3, 5, 0, 0, 0, 1),
 (3, 6, 0, 0, 0, 0),
-(3, 7, 0, 0, 0, 0),
-(4, 1, 0, 0, 0, 0),
-(4, 2, 0, 0, 0, 0),
-(4, 3, 0, 0, 0, 0),
-(4, 4, 1, 1, 1, 1),
-(4, 5, 0, 0, 0, 1),
-(4, 6, 0, 0, 0, 0),
-(4, 7, 0, 0, 0, 0);
+(3, 7, 0, 0, 0, 0);
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `chuc_nang`
+-- Table structure for table `chuc_nang`
 --
 
 CREATE TABLE `chuc_nang` (
@@ -143,10 +137,10 @@ CREATE TABLE `chuc_nang` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Đang đổ dữ liệu cho bảng `chuc_nang`
+-- Dumping data for table `chuc_nang`
 --
 
-INSERT INTO `chuc_nang` (`id`, `ten_chuc_nang`, `code`, `icon`) VALUES
+REPLACE INTO `chuc_nang` (`id`, `ten_chuc_nang`, `code`, `icon`) VALUES
 (1, 'Tài khoản', 'account', 'fa-solid fa-users'),
 (2, 'Sản phẩm', 'product', 'fa-solid fa-box-open'),
 (3, 'Danh mục', 'category', 'fa-solid fa-list'),
@@ -158,7 +152,7 @@ INSERT INTO `chuc_nang` (`id`, `ten_chuc_nang`, `code`, `icon`) VALUES
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `ct_tt_bien_the_sp`
+-- Table structure for table `ct_tt_bien_the_sp`
 --
 
 CREATE TABLE `ct_tt_bien_the_sp` (
@@ -169,10 +163,10 @@ CREATE TABLE `ct_tt_bien_the_sp` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Đang đổ dữ liệu cho bảng `ct_tt_bien_the_sp`
+-- Dumping data for table `ct_tt_bien_the_sp`
 --
 
-INSERT INTO `ct_tt_bien_the_sp` (`skus_id`, `id_thuoc_tinh`, `id_gia_tri_tt`, `id_sp`) VALUES
+REPLACE INTO `ct_tt_bien_the_sp` (`skus_id`, `id_thuoc_tinh`, `id_gia_tri_tt`, `id_sp`) VALUES
 (1, 1, 1, 1),
 (1, 2, 3, 1),
 (1, 3, 5, 1),
@@ -219,30 +213,35 @@ INSERT INTO `ct_tt_bien_the_sp` (`skus_id`, `id_thuoc_tinh`, `id_gia_tri_tt`, `i
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `danh_muc`
+-- Table structure for table `danh_muc`
 --
 
 CREATE TABLE `danh_muc` (
   `id` int(5) NOT NULL,
-  `ten_danh_muc` varchar(50) NOT NULL
+  `ten_danh_muc` varchar(50) NOT NULL,
+  `in_stock` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Đang đổ dữ liệu cho bảng `danh_muc`
+-- Dumping data for table `danh_muc`
 --
 
-INSERT INTO `danh_muc` (`id`, `ten_danh_muc`) VALUES
-(1, 'Acer'),
-(2, 'Dell'),
-(3, 'HP'),
-(4, 'Levono'),
-(5, 'Asus'),
-(6, 'Msi');
+REPLACE INTO `danh_muc` (`id`, `ten_danh_muc`, `in_stock`) VALUES
+(1, 'Acer', 1),
+(2, 'Dell', 1),
+(3, 'HP', 1),
+(4, 'Levono', 1),
+(5, 'Asus', 1),
+(6, 'Msi', 1),
+(7, 'â', 0),
+(8, 'ii', 0),
+(9, 'ia', 0),
+(10, 'aaa', 0);
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `don_hang`
+-- Table structure for table `don_hang`
 --
 
 CREATE TABLE `don_hang` (
@@ -257,12 +256,12 @@ CREATE TABLE `don_hang` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Đang đổ dữ liệu cho bảng `don_hang`
+-- Dumping data for table `don_hang`
 --
 
-INSERT INTO `don_hang` (`id`, `id_tk`, `created_date`, `ten_nguoi_nhan`, `dia_chi`, `sdt`, `tong_tien`, `status`) VALUES
-(1, 2, '2023-05-07 05:33:51', 'em iu', 'Tp.HCM', '0862863753', 54400000, 0),
-(4, 2, '2023-05-07 06:47:06', 'em iu', 'Tp.HCM', '0862863753', 26450000, 0),
+REPLACE INTO `don_hang` (`id`, `id_tk`, `created_date`, `ten_nguoi_nhan`, `dia_chi`, `sdt`, `tong_tien`, `status`) VALUES
+(1, 2, '2023-05-07 05:33:51', 'em iu', 'Tp.HCM', '0862863753', 54400000, 1),
+(4, 2, '2023-05-07 06:47:06', 'em iu', 'Tp.HCM', '0862863753', 26450000, 1),
 (5, 2, '2023-05-07 06:49:36', 'em iu', 'Tp.HCM', '0862863753', 27950000, 0),
 (6, 2, '2023-05-07 06:52:03', 'em iu', 'Tp.HCM', '0862863753', 48400000, 0),
 (7, 2, '2023-05-07 06:57:56', 'em iu', 'Tp.HCM', '0862863753', 48400000, 0),
@@ -273,7 +272,7 @@ INSERT INTO `don_hang` (`id`, `id_tk`, `created_date`, `ten_nguoi_nhan`, `dia_ch
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `gia_tri_thuoc_tinh`
+-- Table structure for table `gia_tri_thuoc_tinh`
 --
 
 CREATE TABLE `gia_tri_thuoc_tinh` (
@@ -284,10 +283,10 @@ CREATE TABLE `gia_tri_thuoc_tinh` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Đang đổ dữ liệu cho bảng `gia_tri_thuoc_tinh`
+-- Dumping data for table `gia_tri_thuoc_tinh`
 --
 
-INSERT INTO `gia_tri_thuoc_tinh` (`id`, `gia_tri`, `id_thuoc_tinh`, `is_delete`) VALUES
+REPLACE INTO `gia_tri_thuoc_tinh` (`id`, `gia_tri`, `id_thuoc_tinh`, `is_delete`) VALUES
 (1, 'Intel core i5', 1, 0),
 (2, 'Amd ryzen 5', 1, 0),
 (3, '8G', 2, 0),
@@ -303,7 +302,7 @@ INSERT INTO `gia_tri_thuoc_tinh` (`id`, `gia_tri`, `id_thuoc_tinh`, `is_delete`)
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `gio_hang`
+-- Table structure for table `gio_hang`
 --
 
 CREATE TABLE `gio_hang` (
@@ -312,17 +311,17 @@ CREATE TABLE `gio_hang` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Đang đổ dữ liệu cho bảng `gio_hang`
+-- Dumping data for table `gio_hang`
 --
 
-INSERT INTO `gio_hang` (`id`, `id_tk`) VALUES
+REPLACE INTO `gio_hang` (`id`, `id_tk`) VALUES
 (4, 2),
 (5, 5);
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `nhom_quyen`
+-- Table structure for table `nhom_quyen`
 --
 
 CREATE TABLE `nhom_quyen` (
@@ -331,19 +330,18 @@ CREATE TABLE `nhom_quyen` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Đang đổ dữ liệu cho bảng `nhom_quyen`
+-- Dumping data for table `nhom_quyen`
 --
 
-INSERT INTO `nhom_quyen` (`id`, `ten_nhom_quyen`) VALUES
+REPLACE INTO `nhom_quyen` (`id`, `ten_nhom_quyen`) VALUES
 (1, 'user'),
 (2, 'admin'),
-(3, 'admin quản lý sản phẩm'),
-(4, 'admin quản lý thuộc tính');
+(3, 'admin quản lý sản phẩm');
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `phieu_nhap`
+-- Table structure for table `phieu_nhap`
 --
 
 CREATE TABLE `phieu_nhap` (
@@ -355,7 +353,7 @@ CREATE TABLE `phieu_nhap` (
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `san_pham`
+-- Table structure for table `san_pham`
 --
 
 CREATE TABLE `san_pham` (
@@ -370,10 +368,10 @@ CREATE TABLE `san_pham` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Đang đổ dữ liệu cho bảng `san_pham`
+-- Dumping data for table `san_pham`
 --
 
-INSERT INTO `san_pham` (`id`, `ten_sp`, `description`, `img_path`, `in_stock`, `id_danh_muc`, `created_date`, `modified_date`) VALUES
+REPLACE INTO `san_pham` (`id`, `ten_sp`, `description`, `img_path`, `in_stock`, `id_danh_muc`, `created_date`, `modified_date`) VALUES
 (1, 'Acer Nitro 5 Eagle', 'Mô tả sản phẩm test', '644d15752ce79.png', 1, 1, '2023-04-30 11:14:43', '2023-04-30 11:23:09'),
 (2, 'Dell Inspiron 5515', 'Mô tả sản phẩm test', '644d15ad0255e.jpg', 1, 2, '2023-04-30 11:14:53', '2023-04-30 11:23:26'),
 (3, 'MSI Bravo 15', 'Mô tả sản phẩm test', '644d17354790d.png', 1, 6, '2023-04-30 11:15:07', '2023-04-30 11:23:37'),
@@ -387,7 +385,7 @@ INSERT INTO `san_pham` (`id`, `ten_sp`, `description`, `img_path`, `in_stock`, `
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `skus`
+-- Table structure for table `skus`
 --
 
 CREATE TABLE `skus` (
@@ -402,10 +400,10 @@ CREATE TABLE `skus` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Đang đổ dữ liệu cho bảng `skus`
+-- Dumping data for table `skus`
 --
 
-INSERT INTO `skus` (`id`, `sku_name`, `don_gia`, `so_luong`, `id_sp`, `in_stock`, `created_date`, `modified_date`) VALUES
+REPLACE INTO `skus` (`id`, `sku_name`, `don_gia`, `so_luong`, `id_sp`, `in_stock`, `created_date`, `modified_date`) VALUES
 (1, 'AN-515 57-53F9 (i5/8G/256GB/RTX3050)', 20990000, 50, 1, 1, '2023-05-05 08:33:44', '2023-05-05 08:35:31'),
 (2, 'AN515 45 R6EV (r5/8G/512GB/GTX1650)', 18990000, 40, 1, 1, '2023-05-05 08:34:05', '2023-05-05 08:34:05'),
 (3, '8529 BLK (i5/4G/256GB)', 11490000, 60, 2, 1, '2023-05-05 08:34:08', '2023-05-05 08:34:08'),
@@ -421,7 +419,7 @@ INSERT INTO `skus` (`id`, `sku_name`, `don_gia`, `so_luong`, `id_sp`, `in_stock`
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `tai_khoan`
+-- Table structure for table `tai_khoan`
 --
 
 CREATE TABLE `tai_khoan` (
@@ -430,22 +428,23 @@ CREATE TABLE `tai_khoan` (
   `password` varchar(16) NOT NULL,
   `email` varchar(50) NOT NULL,
   `id_nhom_quyen` int(5) NOT NULL,
-  `status` int(1) NOT NULL
+  `status` int(1) NOT NULL,
+  `is_deleted` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Đang đổ dữ liệu cho bảng `tai_khoan`
+-- Dumping data for table `tai_khoan`
 --
 
-INSERT INTO `tai_khoan` (`id`, `ten_tk`, `password`, `email`, `id_nhom_quyen`, `status`) VALUES
-(1, 'user', 'user', 'user@gmail.com', 1, 1),
-(2, 'admin', 'admin', 'admin@gmail.com', 2, 1),
-(5, 'thai', '123456', 'thai@gmail.com', 1, 1);
+REPLACE INTO `tai_khoan` (`id`, `ten_tk`, `password`, `email`, `id_nhom_quyen`, `status`, `is_deleted`) VALUES
+(1, 'user', 'user', 'user@gmail.com', 1, 1, 0),
+(2, 'admin', 'admin', 'admin@gmail.com', 2, 1, 0),
+(5, 'thai', '123456', 'thai@gmail.com', 1, 1, 0);
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `thuoc_tinh`
+-- Table structure for table `thuoc_tinh`
 --
 
 CREATE TABLE `thuoc_tinh` (
@@ -455,21 +454,21 @@ CREATE TABLE `thuoc_tinh` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Đang đổ dữ liệu cho bảng `thuoc_tinh`
+-- Dumping data for table `thuoc_tinh`
 --
 
-INSERT INTO `thuoc_tinh` (`id`, `ten_thuoc_tinh`, `is_delete`) VALUES
+REPLACE INTO `thuoc_tinh` (`id`, `ten_thuoc_tinh`, `is_delete`) VALUES
 (1, 'cpu', 0),
 (2, 'ram', 0),
 (3, 'ssd', 0),
 (4, 'vga', 0);
 
 --
--- Chỉ mục cho các bảng đã đổ
+-- Indexes for dumped tables
 --
 
 --
--- Chỉ mục cho bảng `chi_tiet_don_hang`
+-- Indexes for table `chi_tiet_don_hang`
 --
 ALTER TABLE `chi_tiet_don_hang`
   ADD PRIMARY KEY (`id_donhang`,`sku_id`),
@@ -477,14 +476,14 @@ ALTER TABLE `chi_tiet_don_hang`
   ADD KEY `FK_ctdh_donhang` (`id_donhang`);
 
 --
--- Chỉ mục cho bảng `chi_tiet_gio_hang`
+-- Indexes for table `chi_tiet_gio_hang`
 --
 ALTER TABLE `chi_tiet_gio_hang`
   ADD PRIMARY KEY (`id_gio_hang`,`id_sku`),
   ADD KEY `FK_ctgh_skus` (`id_sku`);
 
 --
--- Chỉ mục cho bảng `chi_tiet_phieu_nhap`
+-- Indexes for table `chi_tiet_phieu_nhap`
 --
 ALTER TABLE `chi_tiet_phieu_nhap`
   ADD PRIMARY KEY (`id_phieunhap`,`id_sku`),
@@ -492,7 +491,7 @@ ALTER TABLE `chi_tiet_phieu_nhap`
   ADD KEY `FK_ctpn_phieunhap` (`id_phieunhap`);
 
 --
--- Chỉ mục cho bảng `chi_tiet_quyen`
+-- Indexes for table `chi_tiet_quyen`
 --
 ALTER TABLE `chi_tiet_quyen`
   ADD PRIMARY KEY (`id_nhom_quyen`,`id_chuc_nang`),
@@ -500,13 +499,13 @@ ALTER TABLE `chi_tiet_quyen`
   ADD KEY `FK_ctq_nhom_quyen` (`id_nhom_quyen`) USING BTREE;
 
 --
--- Chỉ mục cho bảng `chuc_nang`
+-- Indexes for table `chuc_nang`
 --
 ALTER TABLE `chuc_nang`
   ADD PRIMARY KEY (`id`);
 
 --
--- Chỉ mục cho bảng `ct_tt_bien_the_sp`
+-- Indexes for table `ct_tt_bien_the_sp`
 --
 ALTER TABLE `ct_tt_bien_the_sp`
   ADD PRIMARY KEY (`skus_id`,`id_thuoc_tinh`),
@@ -516,175 +515,175 @@ ALTER TABLE `ct_tt_bien_the_sp`
   ADD KEY `FK_btsp_giatrithuoctinh` (`id_gia_tri_tt`);
 
 --
--- Chỉ mục cho bảng `danh_muc`
+-- Indexes for table `danh_muc`
 --
 ALTER TABLE `danh_muc`
   ADD PRIMARY KEY (`id`);
 
 --
--- Chỉ mục cho bảng `don_hang`
+-- Indexes for table `don_hang`
 --
 ALTER TABLE `don_hang`
   ADD PRIMARY KEY (`id`),
   ADD KEY `FK_dh_taikhoan` (`id_tk`);
 
 --
--- Chỉ mục cho bảng `gia_tri_thuoc_tinh`
+-- Indexes for table `gia_tri_thuoc_tinh`
 --
 ALTER TABLE `gia_tri_thuoc_tinh`
   ADD PRIMARY KEY (`id`),
   ADD KEY `FK_gttt_thuoctinh` (`id_thuoc_tinh`);
 
 --
--- Chỉ mục cho bảng `gio_hang`
+-- Indexes for table `gio_hang`
 --
 ALTER TABLE `gio_hang`
   ADD PRIMARY KEY (`id`),
   ADD KEY `FK_gh_taikhoan` (`id_tk`);
 
 --
--- Chỉ mục cho bảng `nhom_quyen`
+-- Indexes for table `nhom_quyen`
 --
 ALTER TABLE `nhom_quyen`
   ADD PRIMARY KEY (`id`);
 
 --
--- Chỉ mục cho bảng `phieu_nhap`
+-- Indexes for table `phieu_nhap`
 --
 ALTER TABLE `phieu_nhap`
   ADD PRIMARY KEY (`id`);
 
 --
--- Chỉ mục cho bảng `san_pham`
+-- Indexes for table `san_pham`
 --
 ALTER TABLE `san_pham`
   ADD PRIMARY KEY (`id`),
   ADD KEY `FK_sp_danhmuc` (`id_danh_muc`);
 
 --
--- Chỉ mục cho bảng `skus`
+-- Indexes for table `skus`
 --
 ALTER TABLE `skus`
   ADD PRIMARY KEY (`id`),
   ADD KEY `FK_skus_sanpham` (`id_sp`);
 
 --
--- Chỉ mục cho bảng `tai_khoan`
+-- Indexes for table `tai_khoan`
 --
 ALTER TABLE `tai_khoan`
   ADD PRIMARY KEY (`id`),
   ADD KEY `FK_tk_nhomquyen` (`id_nhom_quyen`);
 
 --
--- Chỉ mục cho bảng `thuoc_tinh`
+-- Indexes for table `thuoc_tinh`
 --
 ALTER TABLE `thuoc_tinh`
   ADD PRIMARY KEY (`id`);
 
 --
--- AUTO_INCREMENT cho các bảng đã đổ
+-- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT cho bảng `chuc_nang`
+-- AUTO_INCREMENT for table `chuc_nang`
 --
 ALTER TABLE `chuc_nang`
   MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
--- AUTO_INCREMENT cho bảng `danh_muc`
+-- AUTO_INCREMENT for table `danh_muc`
 --
 ALTER TABLE `danh_muc`
-  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
--- AUTO_INCREMENT cho bảng `don_hang`
+-- AUTO_INCREMENT for table `don_hang`
 --
 ALTER TABLE `don_hang`
   MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
--- AUTO_INCREMENT cho bảng `gia_tri_thuoc_tinh`
+-- AUTO_INCREMENT for table `gia_tri_thuoc_tinh`
 --
 ALTER TABLE `gia_tri_thuoc_tinh`
   MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
--- AUTO_INCREMENT cho bảng `gio_hang`
+-- AUTO_INCREMENT for table `gio_hang`
 --
 ALTER TABLE `gio_hang`
   MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
--- AUTO_INCREMENT cho bảng `nhom_quyen`
+-- AUTO_INCREMENT for table `nhom_quyen`
 --
 ALTER TABLE `nhom_quyen`
   MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- AUTO_INCREMENT cho bảng `phieu_nhap`
+-- AUTO_INCREMENT for table `phieu_nhap`
 --
 ALTER TABLE `phieu_nhap`
   MODIFY `id` int(5) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT cho bảng `san_pham`
+-- AUTO_INCREMENT for table `san_pham`
 --
 ALTER TABLE `san_pham`
   MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
--- AUTO_INCREMENT cho bảng `skus`
+-- AUTO_INCREMENT for table `skus`
 --
 ALTER TABLE `skus`
   MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
--- AUTO_INCREMENT cho bảng `tai_khoan`
+-- AUTO_INCREMENT for table `tai_khoan`
 --
 ALTER TABLE `tai_khoan`
   MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
--- AUTO_INCREMENT cho bảng `thuoc_tinh`
+-- AUTO_INCREMENT for table `thuoc_tinh`
 --
 ALTER TABLE `thuoc_tinh`
   MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- Các ràng buộc cho các bảng đã đổ
+-- Constraints for dumped tables
 --
 
 --
--- Các ràng buộc cho bảng `chi_tiet_don_hang`
+-- Constraints for table `chi_tiet_don_hang`
 --
 ALTER TABLE `chi_tiet_don_hang`
   ADD CONSTRAINT `FK_ctdh_donhang` FOREIGN KEY (`id_donhang`) REFERENCES `don_hang` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `FK_ctdh_skus` FOREIGN KEY (`sku_id`) REFERENCES `skus` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Các ràng buộc cho bảng `chi_tiet_gio_hang`
+-- Constraints for table `chi_tiet_gio_hang`
 --
 ALTER TABLE `chi_tiet_gio_hang`
   ADD CONSTRAINT `FK_ctgh_giohang` FOREIGN KEY (`id_gio_hang`) REFERENCES `gio_hang` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `FK_ctgh_skus` FOREIGN KEY (`id_sku`) REFERENCES `skus` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Các ràng buộc cho bảng `chi_tiet_phieu_nhap`
+-- Constraints for table `chi_tiet_phieu_nhap`
 --
 ALTER TABLE `chi_tiet_phieu_nhap`
   ADD CONSTRAINT `FK_ctpn_phieunhap` FOREIGN KEY (`id_phieunhap`) REFERENCES `phieu_nhap` (`id`),
   ADD CONSTRAINT `FK_ctpn_skus` FOREIGN KEY (`id_sku`) REFERENCES `skus` (`id`);
 
 --
--- Các ràng buộc cho bảng `chi_tiet_quyen`
+-- Constraints for table `chi_tiet_quyen`
 --
 ALTER TABLE `chi_tiet_quyen`
   ADD CONSTRAINT `FK_ctq_chuc_nang` FOREIGN KEY (`id_chuc_nang`) REFERENCES `chuc_nang` (`id`),
   ADD CONSTRAINT `FK_ctq_nhom_quyen` FOREIGN KEY (`id_nhom_quyen`) REFERENCES `nhom_quyen` (`id`);
 
 --
--- Các ràng buộc cho bảng `ct_tt_bien_the_sp`
+-- Constraints for table `ct_tt_bien_the_sp`
 --
 ALTER TABLE `ct_tt_bien_the_sp`
   ADD CONSTRAINT `FK_btsp_SKUs` FOREIGN KEY (`skus_id`) REFERENCES `skus` (`id`),
@@ -693,37 +692,37 @@ ALTER TABLE `ct_tt_bien_the_sp`
   ADD CONSTRAINT `FK_btsp_thuoc_tinh` FOREIGN KEY (`id_thuoc_tinh`) REFERENCES `thuoc_tinh` (`id`);
 
 --
--- Các ràng buộc cho bảng `don_hang`
+-- Constraints for table `don_hang`
 --
 ALTER TABLE `don_hang`
   ADD CONSTRAINT `FK_dh_taikhoan` FOREIGN KEY (`id_tk`) REFERENCES `tai_khoan` (`id`);
 
 --
--- Các ràng buộc cho bảng `gia_tri_thuoc_tinh`
+-- Constraints for table `gia_tri_thuoc_tinh`
 --
 ALTER TABLE `gia_tri_thuoc_tinh`
   ADD CONSTRAINT `FK_gttt_thuoctinh` FOREIGN KEY (`id_thuoc_tinh`) REFERENCES `thuoc_tinh` (`id`);
 
 --
--- Các ràng buộc cho bảng `gio_hang`
+-- Constraints for table `gio_hang`
 --
 ALTER TABLE `gio_hang`
   ADD CONSTRAINT `FK_gh_taikhoan` FOREIGN KEY (`id_tk`) REFERENCES `tai_khoan` (`id`);
 
 --
--- Các ràng buộc cho bảng `san_pham`
+-- Constraints for table `san_pham`
 --
 ALTER TABLE `san_pham`
   ADD CONSTRAINT `FK_sp_danhmuc` FOREIGN KEY (`id_danh_muc`) REFERENCES `danh_muc` (`id`);
 
 --
--- Các ràng buộc cho bảng `skus`
+-- Constraints for table `skus`
 --
 ALTER TABLE `skus`
   ADD CONSTRAINT `FK_skus_sanpham` FOREIGN KEY (`id_sp`) REFERENCES `san_pham` (`id`);
 
 --
--- Các ràng buộc cho bảng `tai_khoan`
+-- Constraints for table `tai_khoan`
 --
 ALTER TABLE `tai_khoan`
   ADD CONSTRAINT `FK_tk_nhomquyen` FOREIGN KEY (`id_nhom_quyen`) REFERENCES `nhom_quyen` (`id`);

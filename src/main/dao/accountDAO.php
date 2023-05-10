@@ -13,9 +13,9 @@
             $result = $this->read($sql,"i",$id);
             return $result;
         }
-
+        //code cua Chinh
         public function findAll() {
-            $sql = "SELECT * FROM tai_khoan";
+            $sql = "SELECT * FROM tai_khoan WHERE is_deleted !=1";
             $result = $this->read($sql);
             return $result;
         }
@@ -25,13 +25,15 @@
             $result = $this->insert($sql, "sssii", $accountDTO->getTen_tk(), $accountDTO->getPassword(), $accountDTO->getEmail(), $accountDTO->getIdNhomquyen(), $accountDTO->getStatus());
             return $result;
         }
-
+        //code cua Chinh
         public function updateAccount($accountDTO) {
-
+            $sql= "UPDATE tai_khoan SET ten_tk=?, password=?, email=?, id_nhom_quyen=?, status=? WHERE id=?";
+            return $this->update($sql,"sssiii",$accountDTO->getTen_tk(),$accountDTO->getPassword(),$accountDTO->getEmail(),$accountDTO->getIdNhomquyen(),$accountDTO->getStatus(),$accountDTO->getId());
         }
-
+        //code cua Chinh
         public function deleteAccount($id) {
-
+            $sql="UPDATE tai_khoan SET is_deleted = 1, status=0 WHERE id=?";
+            return $this->update($sql,"i",$id);
         }
 
         public function findByUserNameAndPassword($username, $password) {
@@ -43,6 +45,12 @@
         public function findRoleByUserNameAndPassword($username, $password) {
             $sql = "SELECT nq.ten_nhom_quyen, nq.id FROM tai_khoan as tk INNER JOIN nhom_quyen AS nq ON tk.id_nhom_quyen=nq.id WHERE tk.ten_tk = ? AND tk.password = ?";
             $result = $this->read($sql, "ss", $username, $password);
+            return $result;
+        }
+        //code cua chinh
+        public function findRoleByUserId($id) {
+            $sql = "SELECT nq.ten_nhom_quyen FROM tai_khoan as tk INNER JOIN nhom_quyen AS nq ON tk.id_nhom_quyen=nq.id WHERE tk.id = ?";
+            $result = $this->read($sql, "i", $id);
             return $result;
         }
 

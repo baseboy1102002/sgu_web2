@@ -33,9 +33,9 @@ class accountService {
     public function updateAccount($accountDTO) {
         return $this->accountDAO->updateAccount($accountDTO);
     }
-
+    //code cua Chinh
     public function deleteAccount($id) {
-        return $this->accountDAO->deleteAccount($id);
+       return $this->accountDAO->deleteAccount($id);
     }
 
     public function findByUserNameAndPassword($username, $password) {
@@ -44,6 +44,10 @@ class accountService {
 
     public function findRoleByUserNameAndPassword($username, $password) {
         return $this->accountDAO->findRoleByUserNameAndPassword($username, $password);
+    }
+    //Code cua Chinh
+    public function findRoleByUserId($id) {
+        return $this->accountDAO->findRoleByUserId($id);
     }
 
     //  CODE T MỚI VIẾT NGÀY 9/5, M SỬA Ở TRÊN THOẢI MÁI, ĐỪNG ĐỘNG VÔ CODE DƯỚI NÀY //

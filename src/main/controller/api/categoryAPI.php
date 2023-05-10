@@ -40,10 +40,12 @@ class categoryAPI{
     }
 
     // return type: Int (id product)
+    //Code cua Chinh
     public function createCategory() {
         $data = json_decode(file_get_contents('php://input'), true);
         $categoryDTO = new categoryDTO();
-        $categoryDTO->setTen_danh_muc($data['name']);
+        $categoryDTO->setTen_danh_muc($_POST['ten_danh_muc']);
+        $categoryDTO->setIn_stock($_POST['in_stock']);
         $result = $this->categoryService->save($categoryDTO);
 
         if ($result!=null) {
@@ -59,7 +61,7 @@ class categoryAPI{
         $data = json_decode(file_get_contents('php://input'), true);
         $categoryDTO = new categoryDTO();
         $categoryDTO->setId($id);
-        $categoryDTO->setTen_danh_muc($data['name']);
+        $categoryDTO->setTen_danh_muc($_POST['ten_danh_muc']);
         $result = $this->categoryService->updateCategory($categoryDTO);
 
         if ($result) {
@@ -98,15 +100,15 @@ switch ($method) {
         }
         break;
     case 'POST':
+        if (isset($_GET['id'])) {
+            $id = intval($_GET['id']);
+            $categoryAPI->updateCategory($id);
+        }else
         // INSERT
         $categoryAPI->createCategory();
         break;
     case 'PUT':
         // UPDATE
-        if (isset($_GET['id'])) {
-            $id = intval($_GET['id']);
-            $categoryAPI->updateCategory($id);
-        }
         break;
     case 'DELETE':
         // Delete

@@ -180,7 +180,7 @@
                                     <tr class="category_list_header">
                                         <th class="category_list_items">Mã danh mục</th>
                                         <th class="category_list_items">Tên danh mục</th>
-                                        <th class="category_list_items">Thao tác</th>
+                                        <th class="category_list_items">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody class="category_list">
@@ -198,21 +198,20 @@
                                     <h4 class="modal-title modal-title-category">Thêm danh mục</h4>
                                 </div>
                                 <div class="modal-body">
-                                    <form>
+                                    <form id="category_form" enctype="multipart/form-data">
                                         <div class="form-group">
-                                            <label for="category_id">Mã danh mục</label>
-                                            <input class="form-input" type="text" id="category_id" readonly>
+                                            <label for="category_id">Mã danh mục <span id="category_id">auto</span></label>
                                         </div>
                                         <div class="form-group">
-                                            <label for="category_name">Tên danh mục</label>
-                                            <input class="form-input" type="text" id="category_name">
+                                            <label for="category_name">Tên danh mục<span style="color: red;">(*)</span></label>
+                                            <input class="form-input" type="text" name="ten_danh_muc" id="category_name">
+                                            <span class="messege" style="color: red;"></span>
                                         </div>
-                                        <span class="messege" style="color: red;"></span>
+                                    </div>
+                                    <div class="modal-footer form-btns">
+                                        <button type="submit" class="btn btn-success" id="category_confirm_btn">Xác nhận</button>
+                                        <button type="button" class="btn btn-danger" data-dismiss="modal" id="category_cancel_btn">Hủy</button>
                                     </form>
-                                </div>
-                                <div class="modal-footer form-btns">
-                                    <button type="button" class="btn btn-success" id="category_confirm_btn">Xác nhận</button>
-                                    <button type="button" class="btn btn-danger" data-dismiss="modal" id="category_cancel_btn">Hủy</button>
                                 </div>
                             </div>
                         </div>
@@ -220,26 +219,24 @@
 
                     <div class="modal fade category_delete_modal category_modal_hide" id="category_delete_modal" role="dialog">
                         <div class="modal-dialog category_modal_form">
-                            <div class="modal-content">
+                            <div class="modal-content"> 
                                 <div class="modal-header">
                                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                                     <h4 class="modal-title modal-title-category">Xóa danh mục</h4>
                                 </div>
                                 <div class="modal-body">
-                                    <form>
+                                    <form id="category-delete-form">
                                         <div class="form-group">
                                             <label for="category_id">Mã danh mục</label>
                                             <input class="form-input category_delete_id" type="text" id="category_id" readonly>
                                         </div>
                                         <div class="form-group">
                                             <label for="category_name">Tên danh mục</label>
-                                            <input class="form-input category_delete_name" type="text" id="category_name">
+                                            <input class="form-input category_delete_name" type="text" id="category_name" readonly>
                                         </div>
+                                            <button type="submit" class="btn btn-success category_confirm_delete_btn" id="category_confirm_btn">Xác nhận</button>
+                                            <button type="button" class="btn btn-danger" data-dismiss="modal" id="category_cancel_btn">Hủy</button>
                                     </form>
-                                </div>
-                                <div class="modal-footer form-btns">
-                                    <button type="button" class="btn btn-success category_confirm_delete_btn" id="category_confirm_btn">Xác nhận</button>
-                                    <button type="button" class="btn btn-danger" data-dismiss="modal" id="category_cancel_btn">Hủy</button>
                                 </div>
                             </div>
                         </div>
@@ -415,14 +412,66 @@
                     </div>
 
                     <div class="modal fade order_modal" id="order_modal" role="dialog">
-                        <div class="modal-dialog">
+                        <div class="modal-dialog modal-lg">
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                                     <h4 class="modal-title">Chi tiết đơn hàng</h4>
                                 </div>
-                                <div class="modal-body oderNoteListDetail">
+                                <div class="modal-body oderNoteDetail">
+                                    <div class="orderNote-detail">
+                                        <form class="row g-3 order_form">
+                                            <div class="col-md-2">
+                                            <label for="order_id" class="form-label">id</label>
+                                            <input type="text" class="form-control" id="order_id" readonly>
+                                            </div>
+                                            <div class="col-md-6">
+                                            <label for="order_date" class="form-label">Ngày đặt hàng</label>
+                                            <input type="text" class="form-control" id="order_date" readonly>
+                                            </div>
+                                            <div class="col-md-4">
+                                            <label for="order_sdt" class="form-label">số điện thoại</label>
+                                            <input type="text" class="form-control" id="order_sdt" readonly>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <label for="order_received" class="form-label">Tên người nhận</label>
+                                                <input type="text" class="form-control" id="order_received" readonly>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label for="order_total" class="form-label">Tổng tiền</label>
+                                                <input type="text" class="form-control" id="order_total" readonly>
+                                            </div>
+                                            <div class="col-md-12" style="margin-top: 5px;">
+                                                <label for="order_address" class="form-label" >địa chỉ</label>
+                                                <input type="text" class="form-control" id="order_address" readonly>
+                                            </div>
+                                            <div class="col-md-9" style="margin: 10px 0px;">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="checkbox" class="custom-control-input" id="order_status" disabled>
+                                                    <label class="custom-control-label" for="order_status">Trạng thái xử lý</label>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="panel panel-primary">
+                                        <div class="panel-heading">Chi tiết đơn hàng</div>
+                                        <div class="panel-body table-order" style="margin: 20px;">
+                                            <table class="table table-hover orderNoteTab_body">
+                                                <thead>
+                                                    <tr class="orderNote_list_header">
+                                                        <th class="orderNote_list_items">mã</th>
+                                                        <th class="orderNote_list_items">Tên</th>
+                                                        <th class="orderNote_list_items">Đơn giá</th>
+                                                        <th class="orderNote_list_items">Số lượng</th>
+                                                        <th class="orderNote_list_items">tổng tiền</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="orderNote_list">
 
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -469,24 +518,30 @@
                                     <div class="modal-body">
                                         <form action="" method="post" class="account_modal_form">
                                             <div class="form-group">
-                                                <label class="form-label" for="account_id">Tên tài khoản <span style="color: red;">(*)</span></label>
-                                                <input class="form-input form-control" type="text" id="account_id" required>
+                                                <input type="hidden" id="account_id">
+                                                <label class="form-label" for="account_name">Tên tài khoản <span style="color: red;">(*)</span></label>
+                                                <input class="form-input form-control" name="username" type="text" id="account_username" required>
                                             </div>
                                             <div class="form-group">
                                                 <label class="form-label" for="account_email">Email <span style="color: red;">(*)</span></label>
-                                                <input class="form-input form-control" type="text" id="account_email" required>
+                                                <input class="form-input form-control" name="email" type="text" id="account_email" required>
                                             </div>
                                             <div class="form-group">
                                                 <label class="form-label" for="account_pass">Mật khẩu <span style="color: red;">(*)</span></label>
-                                                <input class="form-input form-control" type="text" id="account_pass" required>
+                                                <input class="form-input form-control" name="password" type="text" id="account_pass" required>
                                             </div>
                                             <div class="form-group">
                                                 <label class="form-label" for="account_type_selection">Loại tài khoản <span style="color: red;">(*)</span></label>
-                                                <select id="account_type_selection" class="form-control">
+                                                <select id="account_type_selection" name="id_nhom_quyen" class="form-control">
                                                     <option value="0" selected>Khách hàng</option>
                                                     <option value="1">Quản trị</option>
                                                 </select>
                                             </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="" id="account_status">
+                                                <label class="form-check-label" for="account_status">
+                                                    kích hoạt
+                                                </label>
                                             <div class="form-btns">
                                                 <button type="submit" class="btn btn-success" id="account_confirm_btn">Xác nhận</button>
                                                 <button class="btn btn-danger" id="account_cancel_btn" data-dismiss="modal">Hủy</button>
@@ -496,6 +551,7 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
 
 
                         <div class="modal fade account_delete_modal account_modal_hide" id="account_delete_modal" role="dialog">
@@ -558,7 +614,7 @@
                     </div>
                 </div>
 
-                <div class="tabs report_tab report">
+                <div class="tabs report_tab report tab_hide">
                     <div class="report_tab_heading">
                         <h2>THỐNG KÊ KINH DOANH</h2>
                         <hr>
@@ -567,7 +623,7 @@
                     <div class="report_filter panel panel-primary">
                         <div class="panel-heading">Thống kê</div>
                         <div class="panel-body row">
-                            <div class="col-md-2"></div>
+                            <div class="col-md-1"></div>
                             <div class="form-group col-md-2" style="margin-left: 50px; padding: 0;">
                                 <label for="report_date_from"><small class="text-muted">Khoảng thời gian:</small></label>
                                 <input type="date" id="report_date_from" class="form-control report-input-config">
@@ -576,25 +632,53 @@
                                 <label for="report_date_to"><small class="text-muted">đến:</small></label>
                                 <input type="date" id="report_date_to" class="form-control report-input-config">
                             </div>
-                            <select id="report_filter_category" class="form-control report-input-config col-md-2" style="margin-top: 25px;margin-left: -40px"></select>
-
-                            </select>
-                            <div class="col-md-1"></div>
-                            <button class="btn btn-success col-md-1" id="report_filter_btn" style="margin-top: 25px; margin-left: -80px">Lọc</button>
-                            <div class="col-md-2">
-                                <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#doanhthu" style="margin-top: 25px;">Doanh thu
-                                    <span class="badge" style="margin-left: 2px;">2</span>
-                                </button>
-                                <div class="report_result collapse" id="doanhthu" style="margin-top: 25px;">
-                                    <p id="report_total_quantity"></p>
-                                    <p id="report_total_income"></p>
+                            <div class="col-md-2"style="margin-left: -50px">
+                                <label for="report_filter_category"><small class="text-muted">danh mục:</small></label>
+                                <select id="report_filter_category" class="form-control report-input-config" ></select>
+                                
+                                </select>
+                            </div>
+                            <div class="col-md-2"style="margin-left: -60px">
+                                <label for="report_filter_sort"><small class="text-muted">sắp xếp:</small></label>
+                                <select id="report_filter_title" class="form-control report-input-config col-md-2" >
+                                    <option value="total">Doanh thu</option>
+                                    <option value="quantity">Số Lượng</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2"style="margin-top:15px">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="report_filter_sort" value="ASC" checked>
+                                    <label class="form-check-label" for="flexRadioDefault1">Tăng dần</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="report_filter_sort" value="DESC">
+                                    <label class="form-check-label" for="flexRadioDefault2"> Giảm dần</label>
                                 </div>
                             </div>
-                            <div class="col-md-2"></div>
+                            <div class="col-md-1"></div>
+                            <button class="btn btn-success col-md-1" id="report_filter_btn" style="margin-top: 25px; margin-left: -60px">Thống kê</button>
+                            <div class="col-md-1"></div>
                         </div>
                     </div>
+
                     <div class="panel panel-primary">
-                        <div class="panel-heading">Sản phẩm</div>
+                        <div class="panel-heading" style="line-height: 40px;">Sản phẩm
+                            <div class="form-inline col-md-5" style="float: right;">
+                                <div class="form-group" style="float: right;">
+                                    <label for="report_total_income">Tổng doanh thu:</label>
+                                    <input type="text" id="report_total_income" class="form-control mx-sm-3" readonly>
+                                </div>
+                            </div>
+                            <div class="form-inline col-md-5" style="float: right;">
+                                <div class="form-group" style="float: right;">
+                                    <label for="report_total_quantity">Tổng số lượng:</label>
+                                    <input type="text" id="report_total_quantity" class="form-control mx-sm-3" readonly>
+                                </div>
+                            </div>
+
+
+
+                        </div>
                         <div class="panel-body table-statistical" style="margin: 20px;">
                             <table class="table table-hover report_tab_body">
                                 <thead>
@@ -608,8 +692,10 @@
 
                                 </tbody>
                             </table>
+                            
                         </div>
                     </div>
+
                 </div>
                 <div class="tabs attribute_tab attribute tab_hide">
                     <div class="attribute_heading" style="position: relative">
