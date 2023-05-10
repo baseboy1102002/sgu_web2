@@ -438,17 +438,17 @@
         
         <!-- review order notes modal -->
         <div class="modal fade"id="orderNote_modal" tabindex="-1" role="dialog">
-        <div class="modal-dialog modal-xl">
-                <div class="modal-content orderNote_container">
-                <div class="modal-header orderNote_header">
-                    <h4 class="modal-title text-white">Đơn hàng của tôi</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="orderNote_body modal-body">
+            <div class="modal-dialog modal-xl">
+                    <div class="modal-content orderNote_container">
+                    <div class="modal-header orderNote_header">
+                        <h4 class="modal-title text-white">Đơn hàng của tôi</h4>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="orderNote_body modal-body">
+                    </div>
                 </div>
             </div>
         </div>
-
         <!-- scroll top btn -->
         <div id="scroll_top_btn"><i class="fa-solid fa-arrow-up"></i></div>
 
